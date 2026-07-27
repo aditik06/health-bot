@@ -21,6 +21,7 @@ app.use('/api/kicks', require('./routes/kicks'));
 app.use('/api/contractions', require('./routes/contractions'));
 app.use('/api/cycles', require('./routes/cycles'));
 app.use('/api/chat', require('./routes/chat'));
+app.use('/api/analytics', require('./routes/analytics'));
 
 app.use((err, req, res, next) => {
   console.error(err);

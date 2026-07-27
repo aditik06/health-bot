@@ -312,6 +312,7 @@ function setupWeightForm() {
             loadWeightTracking();
             updateWeightChart();
             showNotification('Weight logged! ⚖️');
+            trackEvent('log_weight');
         } catch (err) {
             showNotification(err.message || 'Could not log weight');
         }

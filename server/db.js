@@ -117,6 +117,19 @@ CREATE TABLE IF NOT EXISTS chat_messages (
   content TEXT NOT NULL,
   created_at TEXT DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))
 );
+
+-- Feature-usage counters only. Deliberately stores no free-text, no health
+-- values, and no request metadata (IP, user agent) - just which feature was
+-- used and when, so we can tell what people actually use.
+CREATE TABLE IF NOT EXISTS analytics_events (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  event TEXT NOT NULL,
+  created_at TEXT DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))
+);
+
+CREATE INDEX IF NOT EXISTS idx_analytics_event ON analytics_events(event);
+CREATE INDEX IF NOT EXISTS idx_analytics_created_at ON analytics_events(created_at);
 `);
 
 module.exports = db;

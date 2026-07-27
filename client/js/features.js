@@ -63,6 +63,7 @@ function setupMedicationTracker() {
             loadMedications();
             updateTodaysMedications();
             showNotification('Medication added! 💊');
+            trackEvent('add_medication');
         } catch (err) {
             showNotification(err.message || 'Could not add medication');
         }
@@ -86,6 +87,7 @@ async function handlePrescriptionUpload(event) {
         loadPrescriptions();
         loadPrescribedDietSection();
         showNotification('Prescription uploaded! 📄');
+        trackEvent('upload_prescription');
     } catch (err) {
         showNotification(err.message || 'Could not upload prescription');
     }
@@ -169,6 +171,7 @@ async function markMedicationTaken(id) {
         await api.post(`/medications/${id}/log`);
         state.medicationLogsToday.push({ medicationId: id, takenAt: new Date().toISOString() });
         showNotification(`${med.name} marked as taken! ✓`);
+        trackEvent('log_medication_taken');
         updateTodaysMedications();
     } catch (err) {
         showNotification(err.message || 'Could not log medication');
@@ -277,6 +280,7 @@ function setupDiary() {
             loadDiaryEntries();
             updateWeeklyMoodChart();
             showNotification('Diary entry saved! 📔');
+            trackEvent('log_diary_entry');
         } catch (err) {
             showNotification(err.message || 'Could not save diary entry');
         }
@@ -433,6 +437,7 @@ async function recordKick() {
         setTimeout(() => animation.classList.remove('pulse'), 600);
 
         showNotification('Kick recorded! 👶');
+        trackEvent('log_kick');
     } catch (err) {
         showNotification(err.message || 'Could not record kick');
     }
@@ -606,6 +611,7 @@ async function stopContraction() {
             durationSec: duration
         });
         state.contractions.unshift(created);
+        trackEvent('log_contraction');
         updateContractionDisplay();
         checkContractionPattern();
     } catch (err) {

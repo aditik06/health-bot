@@ -27,6 +27,7 @@ async function setupChat() {
         input.value = '';
         input.style.height = 'auto';
         appendChatMessage('user', message);
+        trackEvent('send_chat_message');
         setChatTyping(true);
 
         try {

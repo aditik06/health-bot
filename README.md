@@ -27,6 +27,22 @@ A full-stack web app for tracking menstrual cycles, pregnancy, and day-to-day he
 - Real accounts with hashed passwords and JWT auth — your data lives in a database, not `localStorage`
 - Light and dark themes, data export/import, and account deletion
 
+## Usage Analytics
+
+The app records which features get used, to guide what to build next. This is
+deliberately minimal and first-party:
+
+- **Stays in your own database.** Events go to `/api/analytics` on this server —
+  no third-party analytics provider, no external requests.
+- **Event names only.** Each row stores a user id, an event name from a fixed
+  allowlist (`server/routes/analytics.js`), and a timestamp. No free text, no
+  health values, no IP address, no user agent. An event name outside the
+  allowlist is rejected rather than stored.
+- **Aggregate reads only.** `GET /api/analytics/summary` returns per-feature
+  totals and unique-user counts — it never exposes individual users' activity.
+- **Deleted with the account.** Events are removed via `ON DELETE CASCADE` when
+  a user deletes their account.
+
 ## Getting Started
 
 ### Prerequisites

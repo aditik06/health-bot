@@ -213,6 +213,7 @@ function navigateTo(sectionId) {
         s.classList.toggle('active', s.id === sectionId);
     });
     window.scrollTo(0, 0);
+    trackEvent(`view_${sectionId}`);
 }
 
 function setupLogout() {
@@ -452,6 +453,7 @@ async function addCyclePrediction() {
         ? `based on the average of your last ${state.cycleLogs.length} logged cycle(s)`
         : 'based on your configured cycle length (log a few actual periods for a more accurate prediction)';
 
+    trackEvent('predict_cycle');
     showNotification(`🔮 Next period predicted around ${predicted.toLocaleDateString()} (${basis})`);
     navigateTo('calendar');
 }
@@ -469,6 +471,7 @@ async function logPeriodStart() {
         state.cycleLogs.push(entry);
         setupCalendar();
         showNotification('Period start logged! 📌');
+        trackEvent('log_period');
     } catch (err) {
         showNotification(err.message || 'Could not log period start');
     }
@@ -524,6 +527,7 @@ function setupAppointments() {
             loadAppointments();
             loadNextAppointment();
             showNotification('Appointment added! 🏥');
+            trackEvent('add_appointment');
         } catch (err) {
             showNotification(err.message || 'Could not add appointment');
         }
@@ -800,6 +804,7 @@ function setupSettings() {
     darkModeToggle.addEventListener('change', async (e) => {
         const darkMode = e.target.checked;
         document.body.classList.toggle('dark-mode', darkMode);
+        trackEvent('toggle_dark_mode');
         try {
             await patchProfile({ darkMode });
         } catch (err) {
@@ -910,6 +915,7 @@ function exportAllData() {
     link.download = `health-data-backup-${new Date().toISOString().split('T')[0]}.json`;
     link.click();
 
+    trackEvent('export_data');
     showNotification('All data exported! 📥');
 }
 

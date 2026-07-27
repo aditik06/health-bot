@@ -26,6 +26,7 @@ function setupSpeechToText(buttonId, fieldId) {
         listening = true;
         btn.classList.add('listening');
         btn.title = 'Listening... click to stop';
+        trackEvent('use_voice_input');
         baseText = field.value && !field.value.endsWith(' ') ? field.value + ' ' : field.value;
     };
 
