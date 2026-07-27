@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Women's Health Tracker</title>
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Chart.js for graphs -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <h1>🌸 Health Tracker</h1>
+            <div class="nav-menu">
+                <button class="notification-btn" id="reminderBtn" onclick="showReminders()">
+                    🔔 <span class="notification-badge" id="reminderCount">0</span>
+                </button>
+                <span id="userName">Welcome!</span>
+                <button class="btn-secondary" id="logoutBtn">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Dashboard Container -->
+    <div class="dashboard-container">
+        
+        <!-- Sidebar Menu -->
+        <aside class="sidebar">
+            <ul class="menu">
+                <li class="menu-item active" data-section="overview">📊 Overview</li>
+                <li class="menu-item" data-section="chat">💬 AI Companion</li>
+                <li class="menu-item" data-section="calendar">📅 Advanced Calendar</li>
+                <li class="menu-item" data-section="medication">💊 Medications</li>
+                <li class="menu-item" data-section="diary">📔 Mood & Diary</li>
+                <li class="menu-item" data-section="pregnancy">🤰 Pregnancy Tracker</li>
+                <li class="menu-item" data-section="kicks">👶 Kick Counter</li>
+                <li class="menu-item" data-section="contractions">⏱️ Contraction Timer</li>
+                <li class="menu-item" data-section="diet">🥗 Diet & Nutrition</li>
+                <li class="menu-item" data-section="appointments">🏥 Appointments</li>
+                <li class="menu-item" data-section="emergency">🚨 Emergency Contacts</li>
+                <li class="menu-item" data-section="resources">📚 Resources</li>
+                <li class="menu-item" data-section="settings">⚙️ Settings</li>
+            </ul>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            
+            <!-- ========== OVERVIEW SECTION ========== -->
+            <section id="overview" class="content-section active">
+                <h2>Your Health Overview</h2>
+                
+                <!-- Daily Quote -->
+                <div class="quote-card">
+                    <p id="dailyQuote">Loading quote...</p>
+                </div>
+
+                <!-- Stats Grid -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h3>Current Status</h3>
+                        <p class="stat-number" id="currentStatus">-</p>
+                    </div>
+                    <div class="stat-card" id="cycleCard">
+                        <h3>Cycle Day</h3>
+                        <p class="stat-number" id="cycleDay">-</p>
+                    </div>
+                    <div class="stat-card" id="pregnancyCard" style="display: none;">
+                        <h3>Pregnancy</h3>
+                        <p class="stat-number" id="pregnancyWeek">-</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Next Appointment</h3>
+                        <p class="stat-number" id="nextAppt">None</p>
+                    </div>
+                </div>
+
+                <!-- Dashboard Cards -->
+                <div class="dashboard-grid">
+                    <div class="dashboard-card">
+                        <h3>✨ Today's Insights</h3>
+                        <div id="todayInsights" class="insight-content">
+                            <p>Loading insights...</p>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-card">
+                        <h3>⚡ Quick Actions</h3>
+                        <div class="quick-actions">
+                            <button class="quick-btn" onclick="quickLogMood()">😊 Log Mood</button>
+                            <button class="quick-btn" onclick="quickAddMed()">💊 Take Med</button>
+                            <button class="quick-btn" onclick="navigateTo('kicks')">👶 Count Kick</button>
+                            <button class="quick-btn" onclick="navigateTo('diary')">📝 Write Entry</button>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-card">
+                        <h3>💊 Today's Medications</h3>
+                        <div id="todayMedications">
+                            <p class="info-text">No medications scheduled</p>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-card">
+                        <h3>😊 Mood This Week</h3>
+                        <canvas id="weeklyMoodChart" style="max-height: 200px;"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ========== AI COMPANION SECTION ========== -->
+            <section id="chat" class="content-section">
+                <h2>💬 AI Companion</h2>
+                <p class="info-text chat-disclaimer">
+                    Ask questions about your cycle, pregnancy, or symptoms - or just talk about how you're feeling.
+                    This isn't a substitute for medical advice; for anything urgent, contact your doctor or use the
+                    Emergency Contacts tab.
+                </p>
+
+                <div class="chat-container">
+                    <div id="chatMessages" class="chat-messages">
+                        <div class="chat-empty-state">
+                            <p class="info-text">Say hello to get started. 🌸</p>
+                        </div>
+                    </div>
+                    <div id="chatTypingIndicator" class="chat-typing" style="display: none;">
+                        <span></span><span></span><span></span>
+                    </div>
+                    <form id="chatForm" class="chat-input-form">
+                        <div class="textarea-with-mic chat-textarea-wrap">
+                            <textarea id="chatInput" rows="1" placeholder="Type a message..." required></textarea>
+                            <button type="button" id="chatInputMicBtn" class="mic-btn" title="Speak instead of typing">🎤</button>
+                        </div>
+                        <button type="submit" class="btn-primary chat-send-btn">Send</button>
+                    </form>
+                    <button type="button" class="btn-secondary chat-clear-btn" onclick="clearChat()">🗑️ Clear conversation</button>
+                </div>
+            </section>
+
+            <!-- ========== CALENDAR SECTION ========== -->
+            <section id="calendar" class="content-section">
+                <h2>📅 Advanced Cycle Calendar</h2>
+                
+                <div class="calendar-controls">
+                    <button class="btn-primary" onclick="logPeriodStart()">📌 Log Period Start Today</button>
+                    <button class="btn-primary" onclick="addCyclePrediction()">🔮 Predict Next Cycle</button>
+                    <button class="btn-primary" onclick="exportCalendar()">📥 Export Calendar</button>
+                </div>
+
+                <div class="calendar-main">
+                    <!-- Sidebar Info -->
+                    <div class="calendar-sidebar-info">
+                        <div class="cycle-info-card">
+                            <h4>📊 Cycle Statistics</h4>
+                            <div class="cycle-stats">
+                                <div class="stat-item">
+                                    <span class="stat-label">Average Cycle:</span>
+                                    <span class="stat-value" id="avgCycle">28 days</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">Period Length:</span>
+                                    <span class="stat-value" id="periodLength">5 days</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">Next Period:</span>
+                                    <span class="stat-value" id="nextPeriod">-</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">Fertile Window:</span>
+                                    <span class="stat-value" id="fertileWindow">-</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="cycle-info-card">
+                            <h4>📈 Cycle Length Chart</h4>
+                            <canvas id="cycleLengthChart" style="max-height: 200px;"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Calendar View -->
+                    <div class="calendar-view">
+                        <div class="calendar-header">
+                            <button id="prevMonth" class="calendar-nav">←</button>
+                            <h3 id="currentMonth">Month Year</h3>
+                            <button id="nextMonth" class="calendar-nav">→</button>
+                        </div>
+                        <div id="calendarGrid" class="calendar-grid"></div>
+                        <div class="calendar-legend">
+                            <div class="legend-item">
+                                <span class="legend-color" style="background: #ff6b9d;"></span>
+                                <span>Period</span>
+                            </div>
+                            <div class="legend-item">
+                                <span class="legend-color" style="background: #4ecdc4;"></span>
+                                <span>Fertile Window</span>
+                            </div>
+                            <div class="legend-item">
+                                <span class="legend-color" style="background: #95e1d3;"></span>
+                                <span>Ovulation</span>
+                            </div>
+                            <div class="legend-item">
+                                <span class="legend-color" style="background: #ffd93d;"></span>
+                                <span>Predicted</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ========== MEDICATION SECTION ========== -->
+            <section id="medication" class="content-section">
+                <h2>💊 Medication & Supplement Tracker</h2>
+                
+                <div class="medication-container">
+                    <!-- Prescription Upload -->
+                    <div class="prescription-upload">
+                        <h3>📄 Upload Prescription</h3>
+                        <div class="upload-area" id="uploadArea">
+                            <input type="file" id="prescriptionFile" accept="image/*,.pdf" hidden>
+                            <div class="upload-prompt">
+                                <span class="upload-icon">📤</span>
+                                <p>Click or drag prescription here</p>
+                                <small>Supports: JPG, PNG, PDF</small>
+                            </div>
+                        </div>
+                        <div id="prescriptionPreview" class="prescription-preview"></div>
+                    </div>
+
+                    <!-- Add Medication Form -->
+                    <form id="medicationForm" class="medication-form">
+                        <h3>Add Medication</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="medName">Medication Name *</label>
+                                <input type="text" id="medName" placeholder="e.g., Prenatal Vitamins" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="medDosage">Dosage *</label>
+                                <input type="text" id="medDosage" placeholder="e.g., 500mg, 1 tablet" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="medFrequency">Frequency *</label>
+                                <select id="medFrequency" required>
+                                    <option value="once">Once daily</option>
+                                    <option value="twice">Twice daily</option>
+                                    <option value="thrice">Three times daily</option>
+                                    <option value="morning">Every morning</option>
+                                    <option value="night">Every night</option>
+                                    <option value="weekly">Weekly</option>
+                                    <option value="as-needed">As needed</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="medTime">Primary Time</label>
+                                <input type="time" id="medTime" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="medPurpose">Purpose/Prescribed For</label>
+                            <input type="text" id="medPurpose" placeholder="e.g., Pregnancy nutrition">
+                        </div>
+                        <div class="form-group">
+                            <label for="medNotes">Notes (e.g., Take with food)</label>
+                            <div class="textarea-with-mic">
+                                <textarea id="medNotes" rows="2"></textarea>
+                                <button type="button" id="medNotesMicBtn" class="mic-btn" title="Speak instead of typing">🎤</button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="medReminder">
+                                <span>Set reminder for this medication</span>
+                            </label>
+                        </div>
+                        <button type="submit" class="btn-primary">Add Medication</button>
+                    </form>
+
+                    <!-- Medication List -->
+                    <div id="medicationList" class="medication-list">
+                        <h3>Active Medications</h3>
+                        <div id="medListContent">
+                            <p class="info-text">No medications added yet.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ========== MOOD & DIARY SECTION ========== -->
+            <section id="diary" class="content-section">
+                <h2>📔 Mood & Daily Diary</h2>
+                
+                <div class="diary-container">
+                    <!-- Diary Form -->
+                    <form id="diaryForm" class="diary-form">
+                        <h3>Today's Entry</h3>
+                        
+                        <!-- Mood Selection -->
+                        <div class="form-group">
+                            <label>How are you feeling? *</label>
+                            <div class="mood-selector-inline">
+                                <button type="button" class="mood-btn-inline" data-mood="amazing" title="Amazing">😄</button>
+                                <button type="button" class="mood-btn-inline" data-mood="good" title="Good">🙂</button>
+                                <button type="button" class="mood-btn-inline" data-mood="okay" title="Okay">😐</button>
+                                <button type="button" class="mood-btn-inline" data-mood="tired" title="Tired">😴</button>
+                                <button type="button" class="mood-btn-inline" data-mood="sad" title="Sad">😔</button>
+                                <button type="button" class="mood-btn-inline" data-mood="anxious" title="Anxious">😰</button>
+                                <button type="button" class="mood-btn-inline" data-mood="sick" title="Not Well">🤢</button>
+                            </div>
+                            <input type="hidden" id="selectedMood" required>
+                        </div>
+
+                        <!-- Energy Level -->
+                        <div class="form-group">
+                            <label for="energyLevel">Energy Level</label>
+                            <div class="slider-container">
+                                <input type="range" id="energyLevel" min="1" max="10" value="5">
+                                <div class="slider-labels">
+                                    <span>Low</span>
+                                    <span id="energyValue">5</span>
+                                    <span>High</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Title -->
+                        <div class="form-group">
+                            <label for="diaryTitle">Title (Optional)</label>
+                            <input type="text" id="diaryTitle" placeholder="Today's highlight...">
+                        </div>
+
+                        <!-- Content -->
+                        <div class="form-group">
+                            <label for="diaryContent">What's on your mind? *</label>
+                            <div class="textarea-with-mic">
+                                <textarea id="diaryContent" rows="6" placeholder="Write about your day, feelings, experiences..." required></textarea>
+                                <button type="button" id="diaryContentMicBtn" class="mic-btn" title="Speak instead of typing">🎤</button>
+                            </div>
+                            <small class="char-count"><span id="charCount">0</span>/1000 characters</small>
+                        </div>
+
+                        <!-- Symptoms -->
+                        <div class="form-group">
+                            <label>Today's Symptoms (Optional)</label>
+                            <div class="symptom-tags">
+                                <label class="tag-checkbox">
+                                    <input type="checkbox" value="nausea">
+                                    <span>🤢 Nausea</span>
+                                </label>
+                                <label class="tag-checkbox">
+                                    <input type="checkbox" value="fatigue">
+                                    <span>😴 Fatigue</span>
+                                </label>
+                                <label class="tag-checkbox">
+                                    <input type="checkbox" value="cramps">
+                                    <span>💫 Cramps</span>
+                                </label>
+                                <label class="tag-checkbox">
+                                    <input type="checkbox" value="headache">
+                                    <span>🤕 Headache</span>
+                                </label>
+                                <label class="tag-checkbox">
+                                    <input type="checkbox" value="bloating">
+                                    <span>🎈 Bloating</span>
+                                </label>
+                                <label class="tag-checkbox">
+                                    <input type="checkbox" value="back-pain">
+                                    <span>🔙 Back Pain</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Tags -->
+                        <div class="form-group">
+                            <label for="diaryTags">Tags (comma-separated)</label>
+                            <input type="text" id="diaryTags" placeholder="e.g., pregnancy, baby, hospital visit">
+                        </div>
+
+                        <button type="submit" class="btn-primary">Save Entry</button>
+                    </form>
+
+                    <!-- Diary Entries List -->
+                    <div class="diary-entries">
+                        <div class="diary-header">
+                            <h3>Past Entries</h3>
+                            <div class="diary-filters">
+                                <select id="moodFilter" onchange="filterDiary()">
+                                    <option value="all">All Moods</option>
+                                    <option value="amazing">😄 Amazing</option>
+                                    <option value="good">🙂 Good</option>
+                                    <option value="okay">😐 Okay</option>
+                                    <option value="sad">😔 Sad</option>
+                                    <option value="anxious">😰 Anxious</option>
+                                </select>
+                                <input type="text" id="searchDiary" placeholder="Search entries..." onkeyup="filterDiary()">
+                            </div>
+                        </div>
+                        <div id="diaryList">
+                            <p class="info-text">No diary entries yet.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ========== PREGNANCY TRACKER SECTION ========== -->
+            <section id="pregnancy" class="content-section">
+                <h2>🤰 Pregnancy Tracker</h2>
+                
+                <!-- Dashboard -->
+                <div class="pregnancy-dashboard" id="pregnancyDashboard">
+                    <div class="pregnancy-overview">
+                        <div class="pregnancy-card highlight">
+                            <h3>Current Week</h3>
+                            <p class="big-stat" id="currentWeek">-</p>
+                            <p class="trimester" id="currentTrimester">-</p>
+                        </div>
+                        <div class="pregnancy-card">
+                            <h3>Due Date</h3>
+                            <p class="big-stat" id="dueDate">-</p>
+                            <p id="daysRemaining">-</p>
+                        </div>
+                        <div class="pregnancy-card">
+                            <h3>Baby Size</h3>
+                            <p class="baby-size-emoji" id="babySizeEmoji">👶</p>
+                            <p class="big-stat" id="babySize">-</p>
+                            <p id="babySizeCompare">-</p>
+                        </div>
+                    </div>
+
+                    <div class="pregnancy-grid">
+                        <!-- Development -->
+                        <div class="pregnancy-section">
+                            <h3>👶 This Week's Development</h3>
+                            <div id="weeklyDevelopment" class="development-info">
+                                <p>Loading development info...</p>
+                            </div>
+                        </div>
+
+                        <!-- Weight Tracking -->
+                        <div class="pregnancy-section">
+                            <h3>⚖️ Weight Tracking</h3>
+                            <form id="weightForm" class="inline-form">
+                                <input type="number" id="weightValue" step="0.1" placeholder="Weight (kg)" required>
+                                <button type="submit" class="btn-primary">Log</button>
+                            </form>
+                            <div class="weight-summary">
+                                <div class="weight-stat">
+                                    <span>Current:</span>
+                                    <strong id="currentWeight">-</strong>
+                                </div>
+                                <div class="weight-stat">
+                                    <span>Gained:</span>
+                                    <strong id="weightGained">-</strong>
+                                </div>
+                                <div class="weight-stat">
+                                    <span>Recommended:</span>
+                                    <strong id="recommendedGain">-</strong>
+                                </div>
+                            </div>
+                            <canvas id="weightChart" style="max-height: 200px;"></canvas>
+                            <p id="weightChartEmpty" class="info-text">Log at least 2 weight entries to see your trend chart.</p>
+                        </div>
+
+                        <!-- Milestones -->
+                        <div class="pregnancy-section">
+                            <h3>🎯 Trimester Milestones</h3>
+                            <div id="milestones" class="milestone-list">
+                                <p>Loading milestones...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Not Pregnant Message -->
+                <div class="not-pregnant-message" id="notPregnantMessage" style="display: none;">
+                    <p class="info-text">This section is for tracking pregnancy. Update your status in settings if you're pregnant.</p>
+                </div>
+            </section>
+
+            <!-- ========== KICK COUNTER SECTION ========== -->
+            <section id="kicks" class="content-section">
+                <h2>👶 Baby Kick Counter</h2>
+                
+                <div class="kick-counter">
+                    <div class="kick-main">
+                        <!-- Display -->
+                        <div class="kick-display">
+                            <div class="kick-visual">
+                                <div class="kick-animation" id="kickAnimation">
+                                    <p class="kick-number" id="kickCount">0</p>
+                                </div>
+                                <p class="kick-label">kicks today</p>
+                            </div>
+                        </div>
+
+                        <!-- Info Grid -->
+                        <div class="kick-info-grid">
+                            <div class="kick-info-card">
+                                <span class="info-label">Session Started</span>
+                                <span class="info-value" id="kickStartTime">-</span>
+                            </div>
+                            <div class="kick-info-card">
+                                <span class="info-label">Last Kick</span>
+                                <span class="info-value" id="lastKickTime">-</span>
+                            </div>
+                            <div class="kick-info-card">
+                                <span class="info-label">Duration</span>
+                                <span class="info-value" id="sessionDuration">-</span>
+                            </div>
+                            <div class="kick-info-card">
+                                <span class="info-label">Kicks/Hour</span>
+                                <span class="info-value" id="kicksPerHour">-</span>
+                            </div>
+                        </div>
+
+                        <!-- Controls -->
+                        <div class="kick-controls">
+                            <button class="btn-kick" onclick="recordKick()">
+                                <span class="kick-icon">👶</span>
+                                <span>Record Kick</span>
+                            </button>
+                            <button class="btn-secondary" onclick="startKickSession()">Start New Session</button>
+                            <button class="btn-secondary" onclick="resetKicks()">Reset Today</button>
+                        </div>
+
+                        <!-- Tips -->
+                        <div class="kick-tips">
+                            <h4>💡 Tips for Kick Counting</h4>
+                            <ul>
+                                <li>Best time: After meals or when baby is usually active</li>
+                                <li>Goal: 10 movements in 2 hours is normal</li>
+                                <li>Count all movements: kicks, rolls, jabs</li>
+                                <li>⚠️ Contact your doctor if movements decrease significantly</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- History -->
+                    <div class="kick-history">
+                        <h3>📊 Kick History</h3>
+                        <canvas id="kickChart" style="max-height: 200px;"></canvas>
+                        <div id="kickHistoryList">
+                            <p class="info-text">No kick sessions yet.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ========== CONTRACTION TIMER SECTION ========== -->
+            <section id="contractions" class="content-section">
+                <h2>⏱️ Contraction Timer</h2>
+                
+                <div class="contraction-timer">
+                    <div class="timer-main">
+                        <!-- Timer Display -->
+                        <div class="timer-display-large">
+                            <div class="timer-circle">
+                                <svg class="timer-svg" viewBox="0 0 200 200">
+                                    <circle class="timer-bg" cx="100" cy="100" r="90"></circle>
+                                    <circle class="timer-progress" id="timerProgress" cx="100" cy="100" r="90"></circle>
+                                </svg>
+                                <div class="timer-text">
+                                    <p class="timer-label">Duration</p>
+                                    <p class="timer-number" id="contractionDuration">00:00</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Stats -->
+                        <div class="timer-stats">
+                            <div class="timer-stat-card">
+                                <span class="stat-icon">⏱️</span>
+                                <div>
+                                    <p class="stat-label">Average Duration</p>
+                                    <p class="stat-value" id="avgDuration">-</p>
+                                </div>
+                            </div>
+                            <div class="timer-stat-card">
+                                <span class="stat-icon">↔️</span>
+                                <div>
+                                    <p class="stat-label">Time Between</p>
+                                    <p class="stat-value" id="contractionInterval">-</p>
+                                </div>
+                            </div>
+                            <div class="timer-stat-card">
+                                <span class="stat-icon">📊</span>
+                                <div>
+                                    <p class="stat-label">Last Hour</p>
+                                    <p class="stat-value" id="contractionsLastHour">0</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Controls -->
+                        <div class="timer-controls-large">
+                            <button class="btn-timer start" id="startContractionBtn" onclick="startContraction()">
+                                <span>▶ Start Contraction</span>
+                            </button>
+                            <button class="btn-timer stop" id="stopContractionBtn" onclick="stopContraction()" disabled>
+                                <span>⏹ Stop Contraction</span>
+                            </button>
+                            <button class="btn-timer reset" onclick="resetContractions()">
+                                <span>🔄 Reset All</span>
+                            </button>
+                        </div>
+
+                        <!-- Alerts -->
+                        <div class="contraction-alert warning" id="contractionAlert" style="display: none;">
+                            <span class="alert-icon">⚠️</span>
+                            <div>
+                                <strong>Time to Call Your Healthcare Provider!</strong>
+                                <p>Contractions are 5 minutes apart or less for 1+ hour.</p>
+                            </div>
+                        </div>
+
+                        <div class="contraction-alert info" id="earlyLaborAlert" style="display: none;">
+                            <span class="alert-icon">ℹ️</span>
+                            <div>
+                                <strong>Early Labor Pattern Detected</strong>
+                                <p>You may be in early labor. Keep tracking and rest when you can.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- History -->
+                    <div class="contraction-history">
+                        <h3>📝 Today's Contractions</h3>
+                        <div class="contraction-summary">
+                            <div class="summary-stat">
+                                <strong id="totalContractions">0</strong>
+                                <span>Total</span>
+                            </div>
+                            <div class="summary-stat">
+                                <strong id="avgInterval">-</strong>
+                                <span>Avg Interval</span>
+                            </div>
+                            <div class="summary-stat">
+                                <strong id="pattern">-</strong>
+                                <span>Pattern</span>
+                            </div>
+                        </div>
+                        <div id="contractionList">
+                            <p class="info-text">No contractions recorded.</p>
+                        </div>
+                        <button class="btn-primary" onclick="exportContractions()" style="width: 100%; margin-top: 20px;">
+                            📥 Export for Doctor
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ========== DIET & NUTRITION SECTION ========== -->
+            <section id="diet" class="content-section">
+                <h2>🥗 Diet & Nutrition Plan</h2>
+                
+                <div class="diet-container">
+                    <!-- Prescribed Diet -->
+                    <div class="diet-section">
+                        <h3>📋 Prescribed Diet Plan</h3>
+                        <div class="prescription-diet" id="prescribedDiet">
+                            <p class="info-text">Upload your prescription in the Medications section to get personalized diet recommendations.</p>
+                        </div>
+                        <form id="dietaryNotesForm" class="inline-form dietary-notes-form">
+                            <div class="textarea-with-mic">
+                                <textarea id="dietaryNotes" rows="2" placeholder="Add dietary notes or restrictions from your doctor (e.g. low-sodium, dairy-free)..."></textarea>
+                                <button type="button" id="dietaryNotesMicBtn" class="mic-btn" title="Speak instead of typing">🎤</button>
+                            </div>
+                            <button type="submit" class="btn-primary">💾 Save Notes</button>
+                        </form>
+                    </div>
+
+                    <!-- Recommendations -->
+                    <div class="diet-grid">
+                        <div class="diet-card">
+                            <h3>🥗 Recommended Foods</h3>
+                            <div id="recommendedFoods">
+                                <p>Loading recommendations...</p>
+                            </div>
+                        </div>
+
+                        <div class="diet-card">
+                            <h3>🚫 Foods to Avoid</h3>
+                            <div id="avoidFoods">
+                                <p>Loading...</p>
+                            </div>
+                        </div>
+
+                        <div class="diet-card">
+                            <h3>💊 Essential Nutrients</h3>
+                            <div id="essentialNutrients">
+                                <p>Loading...</p>
+                            </div>
+                        </div>
+
+                        <div class="diet-card">
+                            <h3>💪 Exercise Suggestions</h3>
+                            <div id="exercisePlan">
+                                <p>Loading...</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Meal Plan -->
+                    <div class="meal-plan">
+                        <h3>🍽️ Sample Daily Meal Plan</h3>
+                        <div id="sampleMealPlan" class="meal-grid">
+                            <p>Loading meal plan...</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ========== APPOINTMENTS SECTION ========== -->
+            <section id="appointments" class="content-section">
+                <h2>🏥 Doctor Appointments</h2>
+                
+                <form id="appointmentForm" class="appointment-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="appointmentDate">Date *</label>
+                            <input type="date" id="appointmentDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="appointmentTime">Time *</label>
+                            <input type="time" id="appointmentTime" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="appointmentType">Type *</label>
+                            <select id="appointmentType" required>
+                                <option>Regular Checkup</option>
+                                <option>Ultrasound</option>
+                                <option>Blood Test</option>
+                                <option>Glucose Test</option>
+                                <option>Anatomy Scan</option>
+                                <option>Consultation</option>
+                                <option>Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="appointmentDoctor">Doctor</label>
+                            <input type="text" id="appointmentDoctor" placeholder="Dr. Name">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="appointmentNotes">Notes</label>
+                        <div class="textarea-with-mic">
+                            <textarea id="appointmentNotes" rows="2" placeholder="Questions to ask..."></textarea>
+                            <button type="button" id="appointmentNotesMicBtn" class="mic-btn" title="Speak instead of typing">🎤</button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="appointmentReminder" checked>
+                            <span>Remind me 1 day before</span>
+                        </label>
+                    </div>
+                    <button type="submit" class="btn-primary">Add Appointment</button>
+                </form>
+                
+                <div id="appointmentList" class="appointment-list">
+                    <p class="info-text">No appointments scheduled.</p>
+                </div>
+            </section>
+
+            <!-- ========== EMERGENCY CONTACTS SECTION ========== -->
+            <section id="emergency" class="content-section">
+                <h2>🚨 Emergency Contacts</h2>
+                
+                <div class="emergency-grid">
+                    <div class="contact-card emergency">
+                        <div class="contact-icon">👨‍⚕️</div>
+                        <h3>Primary Doctor</h3>
+                        <div id="doctorInfo" class="contact-details">Not set</div>
+                        <button class="btn-call" onclick="callDoctor()">📞 Call Now</button>
+                    </div>
+                    <div class="contact-card emergency">
+                        <div class="contact-icon">🏥</div>
+                        <h3>Hospital/Clinic</h3>
+                        <div id="hospitalInfo" class="contact-details">Not set</div>
+                        <button class="btn-call" onclick="callHospital()">📞 Call Now</button>
+                    </div>
+                    <div class="contact-card emergency">
+                        <div class="contact-icon">🚨</div>
+                        <h3>Emergency Contact</h3>
+                        <div id="emergencyInfo" class="contact-details">Not set</div>
+                        <button class="btn-call" onclick="callEmergency()">📞 Call Now</button>
+                    </div>
+                </div>
+                
+                <button class="btn-primary" onclick="editContacts()">✏️ Edit Contacts</button>
+
+                <div class="emergency-info">
+                    <h3>⚠️ When to Seek Immediate Help</h3>
+                    <ul class="warning-list">
+                        <li>Severe abdominal pain</li>
+                        <li>Heavy bleeding</li>
+                        <li>Severe headache with vision changes</li>
+                        <li>Decreased or no fetal movement</li>
+                        <li>Contractions before 37 weeks</li>
+                        <li>Fluid leaking (water breaking)</li>
+                        <li>Severe swelling of face/hands</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- ========== RESOURCES SECTION ========== -->
+            <section id="resources" class="content-section">
+                <h2>📚 Resources & Support</h2>
+                
+                <div class="resources-grid">
+                    <div class="resource-section">
+                        <h3>📖 Recommended Books</h3>
+                        <div id="bookList">
+                            <p>Loading books...</p>
+                        </div>
+                    </div>
+
+                    <div class="resource-section">
+                        <h3>👥 Support Groups</h3>
+                        <div id="groupList">
+                            <p>Loading groups...</p>
+                        </div>
+                    </div>
+
+                    <div class="resource-section">
+                        <h3>🎓 Educational Resources</h3>
+                        <div class="edu-resources">
+                            <a href="https://www.youtube.com/results?search_query=prenatal+yoga" target="_blank" rel="noopener" class="resource-link">📹 Prenatal Yoga Videos</a>
+                            <a href="https://www.youtube.com/results?search_query=pregnancy+nutrition+guide" target="_blank" rel="noopener" class="resource-link">📖 Pregnancy Nutrition Guide</a>
+                            <a href="https://www.youtube.com/results?search_query=breastfeeding+preparation" target="_blank" rel="noopener" class="resource-link">🍼 Breastfeeding Preparation</a>
+                            <a href="https://www.youtube.com/results?search_query=newborn+baby+care+basics" target="_blank" rel="noopener" class="resource-link">👶 Baby Care Basics</a>
+                            <a href="https://www.youtube.com/results?search_query=postpartum+recovery" target="_blank" rel="noopener" class="resource-link">💪 Postpartum Recovery</a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ========== SETTINGS SECTION ========== -->
+            <section id="settings" class="content-section">
+                <h2>⚙️ Settings</h2>
+                
+                <div class="settings-grid">
+                    <div class="setting-section">
+                        <h3>👤 Profile Settings</h3>
+                        <button class="btn-primary" onclick="editProfile()">✏️ Edit Profile</button>
+                        <button class="btn-primary" onclick="updatePregnancyStatus()">🤰 Update Pregnancy Status</button>
+                    </div>
+
+                    <div class="setting-section">
+                        <h3>🔔 Notification Settings</h3>
+                        <div class="setting-item">
+                            <label class="switch">
+                                <input type="checkbox" id="medicationReminders" checked>
+                                <span class="slider"></span>
+                            </label>
+                            <span>Medication Reminders</span>
+                        </div>
+                        <div class="setting-item">
+                            <label class="switch">
+                                <input type="checkbox" id="appointmentReminders" checked>
+                                <span class="slider"></span>
+                            </label>
+                            <span>Appointment Reminders</span>
+                        </div>
+                        <div class="setting-item">
+                            <label class="switch">
+                                <input type="checkbox" id="dailyReminders" checked>
+                                <span class="slider"></span>
+                            </label>
+                            <span>Daily Check-in Reminders</span>
+                        </div>
+                    </div>
+
+                    <div class="setting-section">
+                        <h3>🎨 Appearance</h3>
+                        <div class="setting-item">
+                            <label class="switch">
+                                <input type="checkbox" id="darkModeToggle">
+                                <span class="slider"></span>
+                            </label>
+                            <span>Dark Mode</span>
+                        </div>
+                    </div>
+
+                    <div class="setting-section">
+                        <h3>💾 Data Management</h3>
+                        <button class="btn-primary" onclick="exportAllData()">📥 Export All Data</button>
+                        <button class="btn-primary" onclick="document.getElementById('importFile').click()">📤 Import Data</button>
+                        <input type="file" id="importFile" accept=".json" hidden onchange="importData(event)">
+                        <button class="btn-secondary" onclick="clearAllData()" style="background: #e74c3c; color: white;">
+                            🗑️ Clear All Data
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Reminder Modal -->
+    <div id="reminderModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>🔔 Today's Reminders</h3>
+                <span class="close-modal" onclick="closeReminders()">&times;</span>
+            </div>
+            <div class="modal-body" id="reminderList">
+                <p class="info-text">No reminders for now!</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Generic Edit Form Modal (profile / contacts / pregnancy status) -->
+    <div id="formModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="formModalTitle">Edit</h3>
+                <span class="close-modal" onclick="closeFormModal()">&times;</span>
+            </div>
+            <form id="formModalForm" class="modal-body">
+                <div id="formModalFields"></div>
+                <button type="submit" class="btn-primary">💾 Save</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Load ALL JavaScript Files in CORRECT ORDER -->
+    <script src="js/api.js"></script>
+    <script src="js/data.js"></script>
+    <script src="js/calendar.js"></script>
+    <script src="js/pregnancy.js"></script>
+    <script src="js/speech.js"></script>
+    <script src="js/features.js"></script>
+    <script src="js/chat.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

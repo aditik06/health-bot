@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Women's Health Tracker - Login</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="welcome-section">
+            <h1>🌸 Women's Health & Pregnancy Tracker</h1>
+            <p class="tagline">Your Personal Health Companion</p>
+        </div>
+
+        <div class="form-container">
+            <div class="form-toggle">
+                <button class="toggle-btn active" id="loginBtn">Login</button>
+                <button class="toggle-btn" id="registerBtn">Register</button>
+            </div>
+
+            <!-- Login Form -->
+            <form id="loginForm" class="auth-form">
+                <h2>Welcome Back!</h2>
+                <div class="form-group">
+                    <label for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" placeholder="Enter your email" required>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" placeholder="Enter your password" required>
+                </div>
+                <button type="submit" class="btn-primary">Login</button>
+                <p style="margin-top: 15px; text-align: center; color: #7f8c8d;">
+                    <small>Demo: Use any email/password to register, then login with same credentials</small>
+                </p>
+            </form>
+
+            <!-- Registration Form -->
+            <form id="registrationForm" class="auth-form hidden">
+                <h2>Join Us!</h2>
+                
+                <div class="form-group">
+                    <label for="name">Full Name *</label>
+                    <input type="text" id="name" placeholder="Your name" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email *</label>
+                    <input type="email" id="email" placeholder="your.email@example.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password *</label>
+                    <input type="password" id="password" placeholder="Create a password" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="age">Age *</label>
+                    <input type="number" id="age" min="18" max="60" placeholder="25" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="cycleStartDate">Last Menstrual Period Start Date *</label>
+                    <input type="date" id="cycleStartDate" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="cycleLength">Average Cycle Length (days) *</label>
+                    <input type="number" id="cycleLength" value="28" min="21" max="35" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Pregnancy Status *</label>
+                    <div class="radio-group">
+                        <label>
+                            <input type="radio" name="pregnancyStatus" value="not-pregnant" checked>
+                            Not Pregnant
+                        </label>
+                        <label>
+                            <input type="radio" name="pregnancyStatus" value="pregnant">
+                            Pregnant
+                        </label>
+                        <label>
+                            <input type="radio" name="pregnancyStatus" value="trying">
+                            Trying to Conceive
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group hidden" id="pregnancyDateGroup">
+                    <label for="pregnancyStartDate">Pregnancy Start Date (First day of last period)</label>
+                    <input type="date" id="pregnancyStartDate">
+                </div>
+
+                <div class="form-group">
+                    <label for="doctorName">Doctor's Name</label>
+                    <input type="text" id="doctorName" placeholder="Dr. Smith">
+                </div>
+
+                <div class="form-group">
+                    <label for="doctorPhone">Doctor's Phone</label>
+                    <input type="tel" id="doctorPhone" placeholder="+1234567890">
+                </div>
+
+                <div class="form-group">
+                    <label for="emergencyContact">Emergency Contact Name</label>
+                    <input type="text" id="emergencyContact" placeholder="Contact name">
+                </div>
+
+                <div class="form-group">
+                    <label for="emergencyPhone">Emergency Contact Phone</label>
+                    <input type="tel" id="emergencyPhone" placeholder="+1234567890">
+                </div>
+
+                <button type="submit" class="btn-primary">Register</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Load API client then app.js for login page -->
+    <script src="js/api.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
