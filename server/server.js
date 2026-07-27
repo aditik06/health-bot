@@ -3,12 +3,23 @@ const express = require('express');
 const cors = require('cors');
 const { PORT } = require('./config');
 
-require('./db'); // ensures schema is created on boot
+const db = require('./db'); // ensures schema is created on boot
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
+
+// Health check for uptime monitoring and hosting platform probes.
+// Verifies DB connectivity rather than just returning 200 blindly.
+app.get('/health', (req, res) => {
+  try {
+    db.prepare('SELECT 1').get();
+    res.json({ status: 'ok', uptime: process.uptime() });
+  } catch (err) {
+    res.status(503).json({ status: 'unavailable', error: 'database unreachable' });
+  }
+});
 
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/users', require('./routes/users'));
