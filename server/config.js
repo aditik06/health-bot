@@ -4,7 +4,13 @@ const crypto = require('crypto');
 
 require('dotenv').config({ path: path.join(__dirname, '.env') });
 
-const SECRET_FILE = path.join(__dirname, '.jwt_secret');
+// Where the SQLite database and uploaded files live. In production this must
+// point at a persistent disk (see render.yaml) or both are lost on restart.
+// Defaults to the server directory for local development.
+const DATA_DIR = process.env.DATA_DIR || __dirname;
+fs.mkdirSync(DATA_DIR, { recursive: true });
+
+const SECRET_FILE = path.join(DATA_DIR, '.jwt_secret');
 
 function loadOrCreateSecret() {
   if (process.env.JWT_SECRET) return process.env.JWT_SECRET;
@@ -19,6 +25,7 @@ function loadOrCreateSecret() {
 }
 
 module.exports = {
+  DATA_DIR,
   JWT_SECRET: loadOrCreateSecret(),
   PORT: process.env.PORT || 3000,
   ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY || null,

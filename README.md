@@ -74,6 +74,39 @@ ANTHROPIC_API_KEY=your-key-here
 
 Get a key at [console.anthropic.com](https://console.anthropic.com/). Without it, the rest of the app works normally — the chat tab just shows a message explaining it isn't configured.
 
+## Deployment
+
+A [`render.yaml`](render.yaml) is included for deploying to [Render](https://render.com):
+
+1. Push this repo to GitHub (already done if you cloned it from there).
+2. In Render, go to **New → Blueprint** and connect the repository. Render reads
+   `render.yaml` and pre-fills the service configuration.
+3. Set `ANTHROPIC_API_KEY` in the dashboard under **Environment** (it's marked
+   `sync: false` in the blueprint so it's never committed to git). Skip this if
+   you don't want the AI chat.
+4. Deploy. Render polls `/health` to confirm the service is up.
+
+**The persistent disk is required, not optional.** This app stores its SQLite
+database and uploaded prescription files on the filesystem, so without a disk
+both are wiped on every restart and redeploy — meaning every user account
+disappears. Render only offers disks on paid instances (~$7/mo), which is why
+the blueprint specifies `plan: starter` rather than `free`.
+
+To remove that constraint, [#7](../../issues/7) (move to Postgres) and
+[#9](../../issues/9) (move uploads to object storage) would need to be done
+first — after which the app becomes stateless and can run on a free tier.
+
+### Deploying elsewhere
+
+The app is a standard Node server with no platform-specific code. On any other
+host, the requirements are:
+
+- Node.js 22.5+
+- Persistent storage mounted somewhere, with `DATA_DIR` pointed at it
+- `JWT_SECRET` set to a fixed value (if unset, one is generated at startup —
+  fine locally, but it would change on every restart and invalidate everyone's
+  login sessions)
+
 ## Project Structure
 
 ```
@@ -107,7 +140,8 @@ All optional except the AI key, which only gates the chat feature.
 | Variable | Default | Purpose |
 |---|---|---|
 | `PORT` | `3000` | Server port |
-| `JWT_SECRET` | auto-generated, stored in `server/.jwt_secret` | Signs auth tokens |
+| `DATA_DIR` | `server/` | Where the SQLite DB, uploads, and JWT secret are stored. Point at a persistent disk in production. |
+| `JWT_SECRET` | auto-generated, stored in `$DATA_DIR/.jwt_secret` | Signs auth tokens. Set explicitly in production. |
 | `ANTHROPIC_API_KEY` | none | Enables the AI companion chat |
 | `ANTHROPIC_CHAT_MODEL` | `claude-opus-5` | Model used for chat |
 

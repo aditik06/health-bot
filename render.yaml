@@ -1,0 +1,33 @@
+# Render deployment config.
+#
+# The disk is not optional: this app stores its SQLite database and uploaded
+# prescription files on the filesystem, so without a persistent disk both are
+# wiped on every restart and redeploy. Render only offers disks on paid
+# instance types - see issues #7 and #9 for the object-storage/Postgres work
+# that would remove this constraint.
+
+services:
+  - type: web
+    name: health-bot
+    runtime: node
+    plan: starter          # required for the disk below; 'free' has no persistent storage
+    region: oregon
+    branch: main
+    buildCommand: npm install --prefix server
+    startCommand: npm start --prefix server
+    healthCheckPath: /health
+
+    disk:
+      name: health-bot-data
+      mountPath: /var/data
+      sizeGB: 1
+
+    envVars:
+      - key: NODE_VERSION
+        value: 22.11.0
+      - key: DATA_DIR
+        value: /var/data      # DB + uploads live on the persistent disk
+      - key: JWT_SECRET
+        generateValue: true   # generated once by Render, then held stable
+      - key: ANTHROPIC_API_KEY
+        sync: false           # set manually in the dashboard; never commit this
