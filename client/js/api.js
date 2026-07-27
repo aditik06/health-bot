@@ -30,7 +30,12 @@ async function apiRequest(path, { method = 'GET', body, isFormData = false } = {
         throw new Error('Could not reach the server. Please check your connection and try again.');
     }
 
-    if (response.status === 401) {
+    // A 401 from the login/register endpoints means the credentials were wrong,
+    // not that a session lapsed - so let those fall through to the normal error
+    // handling below and surface the server's actual message.
+    const isAuthAttempt = path.startsWith('/auth/');
+
+    if (response.status === 401 && !isAuthAttempt) {
         setToken(null);
         if (!window.location.pathname.includes('index.html') && window.location.pathname !== '/') {
             window.location.href = 'index.html';
