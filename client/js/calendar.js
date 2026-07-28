@@ -1,15 +1,44 @@
+// 'YYYY-MM-DD' from the API parses as UTC midnight, while calendar cells are
+// built with new Date(y, m, d) at *local* midnight. Comparing the two mixes
+// timezones and shifts every result by a day in either direction depending on
+// the user's offset, so parse date-only strings as local dates instead.
+function parseLocalDate(value) {
+    if (value instanceof Date) return value;
+    const match = /^(\d{4})-(\d{2})-(\d{2})/.exec(String(value));
+    if (match) {
+        return new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3]));
+    }
+    return new Date(value);
+}
+
+// Whole calendar days between two dates, ignoring time-of-day. Comparing the
+// Y/M/D triples keeps this correct across DST boundaries, where a naive
+// millisecond division can land on 23- or 25-hour days.
+function daysBetween(from, to) {
+    const a = Date.UTC(from.getFullYear(), from.getMonth(), from.getDate());
+    const b = Date.UTC(to.getFullYear(), to.getMonth(), to.getDate());
+    return Math.round((b - a) / 86400000);
+}
+
 class CycleCalendar {
     constructor(cycleStartDate, cycleLength = 28) {
-        this.cycleStartDate = new Date(cycleStartDate);
-        this.cycleLength = cycleLength;
+        this.cycleStartDate = parseLocalDate(cycleStartDate);
+        this.cycleLength = cycleLength > 0 ? cycleLength : 28;
         this.currentMonth = new Date();
     }
 
+    // 1-based day within the cycle. Cycles are periodic in both directions, so
+    // dates before the start date wrap to the end of a prior cycle rather than
+    // going negative - JS % keeps the sign of the dividend, which previously
+    // made every earlier date report a negative day and match `day <= 5`.
+    cycleDayFor(date) {
+        const diffDays = daysBetween(this.cycleStartDate, date);
+        const len = this.cycleLength;
+        return (((diffDays % len) + len) % len) + 1;
+    }
+
     calculateCycleDay() {
-        const today = new Date();
-        const diffTime = today - this.cycleStartDate;
-        const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-        return (diffDays % this.cycleLength) + 1;
+        return this.cycleDayFor(new Date());
     }
 
     getCyclePhase() {
@@ -28,23 +57,16 @@ class CycleCalendar {
     }
 
     isPeriodDay(date) {
-        const diffTime = date - this.cycleStartDate;
-        const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-        const cycleDay = (diffDays % this.cycleLength) + 1;
-        return cycleDay <= 5;
+        return this.cycleDayFor(date) <= 5;
     }
 
     isFertileDay(date) {
-        const diffTime = date - this.cycleStartDate;
-        const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-        const cycleDay = (diffDays % this.cycleLength) + 1;
+        const cycleDay = this.cycleDayFor(date);
         return cycleDay >= 10 && cycleDay <= 17;
     }
 
     isOvulationDay(date) {
-        const diffTime = date - this.cycleStartDate;
-        const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-        const cycleDay = (diffDays % this.cycleLength) + 1;
+        const cycleDay = this.cycleDayFor(date);
         return cycleDay >= 13 && cycleDay <= 15;
     }
 

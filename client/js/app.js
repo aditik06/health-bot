@@ -362,7 +362,7 @@ function renderCalendarWithPredictions(calendarGrid) {
     cycleCalendar.renderCalendar(calendarGrid);
 
     const today = new Date();
-    const nextPeriodStart = new Date(getMostRecentCycleStart());
+    const nextPeriodStart = parseLocalDate(getMostRecentCycleStart());
     nextPeriodStart.setDate(nextPeriodStart.getDate() + getEffectiveCycleLength());
 
     calendarGrid.querySelectorAll('.calendar-day.period').forEach(dayEl => {
@@ -382,15 +382,26 @@ function updateCycleStats() {
     document.getElementById('avgCycle').textContent = `${cycleLength} days`;
     document.getElementById('periodLength').textContent = '5 days'; // Default
 
-    const lastPeriod = new Date(getMostRecentCycleStart());
+    // Project forward to the next cycle that hasn't happened yet. Adding a
+    // single cycle length to the recorded start date only works if that date is
+    // recent - otherwise "Next Period" reports a date months in the past.
+    const lastPeriod = parseLocalDate(getMostRecentCycleStart());
     const nextPeriod = new Date(lastPeriod);
-    nextPeriod.setDate(nextPeriod.getDate() + cycleLength);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    while (nextPeriod <= today) {
+        nextPeriod.setDate(nextPeriod.getDate() + cycleLength);
+    }
     document.getElementById('nextPeriod').textContent = nextPeriod.toLocaleDateString();
 
+    // Anchor the fertile window to the upcoming cycle, not the recorded one.
+    const currentCycleStart = new Date(nextPeriod);
+    currentCycleStart.setDate(currentCycleStart.getDate() - cycleLength);
+
     const ovulationDay = Math.floor(cycleLength / 2);
-    const fertileStart = new Date(lastPeriod);
+    const fertileStart = new Date(currentCycleStart);
     fertileStart.setDate(fertileStart.getDate() + ovulationDay - 3);
-    const fertileEnd = new Date(lastPeriod);
+    const fertileEnd = new Date(currentCycleStart);
     fertileEnd.setDate(fertileEnd.getDate() + ovulationDay + 1);
 
     document.getElementById('fertileWindow').textContent =
@@ -445,7 +456,7 @@ function updateCycleLengthChart() {
 
 async function addCyclePrediction() {
     const cycleLength = getEffectiveCycleLength();
-    const lastStart = new Date(getMostRecentCycleStart());
+    const lastStart = parseLocalDate(getMostRecentCycleStart());
     const predicted = new Date(lastStart);
     predicted.setDate(predicted.getDate() + cycleLength);
 
