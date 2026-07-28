@@ -30,7 +30,6 @@
         <aside class="sidebar">
             <ul class="menu">
                 <li class="menu-item active" data-section="overview">📊 Overview</li>
-                <li class="menu-item" data-section="chat">💬 AI Companion</li>
                 <li class="menu-item" data-section="calendar">📅 Advanced Calendar</li>
                 <li class="menu-item" data-section="medication">💊 Medications</li>
                 <li class="menu-item" data-section="diary">📔 Mood & Diary</li>
@@ -107,35 +106,6 @@
                         <h3>😊 Mood This Week</h3>
                         <canvas id="weeklyMoodChart" style="max-height: 200px;"></canvas>
                     </div>
-                </div>
-            </section>
-
-            <!-- ========== AI COMPANION SECTION ========== -->
-            <section id="chat" class="content-section">
-                <h2>💬 AI Companion</h2>
-                <p class="info-text chat-disclaimer">
-                    Ask questions about your cycle, pregnancy, or symptoms - or just talk about how you're feeling.
-                    This isn't a substitute for medical advice; for anything urgent, contact your doctor or use the
-                    Emergency Contacts tab.
-                </p>
-
-                <div class="chat-container">
-                    <div id="chatMessages" class="chat-messages">
-                        <div class="chat-empty-state">
-                            <p class="info-text">Say hello to get started. 🌸</p>
-                        </div>
-                    </div>
-                    <div id="chatTypingIndicator" class="chat-typing" style="display: none;">
-                        <span></span><span></span><span></span>
-                    </div>
-                    <form id="chatForm" class="chat-input-form">
-                        <div class="textarea-with-mic chat-textarea-wrap">
-                            <textarea id="chatInput" rows="1" placeholder="Type a message..." required></textarea>
-                            <button type="button" id="chatInputMicBtn" class="mic-btn" title="Speak instead of typing">🎤</button>
-                        </div>
-                        <button type="submit" class="btn-primary chat-send-btn">Send</button>
-                    </form>
-                    <button type="button" class="btn-secondary chat-clear-btn" onclick="clearChat()">🗑️ Clear conversation</button>
                 </div>
             </section>
 
@@ -928,6 +898,52 @@
                 <button type="submit" class="btn-primary">💾 Save</button>
             </form>
         </div>
+    </div>
+
+    <!-- ========== FLOATING AI COMPANION ==========
+         Lives outside .dashboard-container so it stays available on every tab
+         rather than being a destination you navigate to. -->
+    <button type="button" id="chatFab" class="chat-fab" aria-expanded="false"
+            aria-controls="chatPanel" title="Chat with your companion">
+        <span class="chat-fab-icon">💬</span>
+    </button>
+
+    <div id="chatPanel" class="chat-panel" role="dialog" aria-label="AI companion chat" aria-hidden="true">
+        <div class="chat-panel-header">
+            <div class="chat-panel-title">
+                <span class="chat-panel-avatar">🌸</span>
+                <div>
+                    <strong>Your Companion</strong>
+                    <small>Here to talk, any time</small>
+                </div>
+            </div>
+            <div class="chat-panel-actions">
+                <button type="button" class="chat-icon-btn" onclick="clearChat()" title="Clear conversation">🗑️</button>
+                <button type="button" class="chat-icon-btn" id="chatCloseBtn" title="Close">&times;</button>
+            </div>
+        </div>
+
+        <p class="chat-disclaimer">
+            Not medical advice - for anything urgent, contact your doctor.
+        </p>
+
+        <div id="chatMessages" class="chat-messages">
+            <div class="chat-empty-state">
+                <p class="info-text">Ask me anything, or just say hi. 🌸</p>
+            </div>
+        </div>
+
+        <div id="chatTypingIndicator" class="chat-typing" style="display: none;">
+            <span></span><span></span><span></span>
+        </div>
+
+        <form id="chatForm" class="chat-input-form">
+            <div class="textarea-with-mic chat-textarea-wrap">
+                <textarea id="chatInput" rows="1" placeholder="Type a message..." required></textarea>
+                <button type="button" id="chatInputMicBtn" class="mic-btn" title="Speak instead of typing">🎤</button>
+            </div>
+            <button type="submit" class="btn-primary chat-send-btn" title="Send">➤</button>
+        </form>
     </div>
 
     <!-- Load ALL JavaScript Files in CORRECT ORDER -->

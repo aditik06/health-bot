@@ -1,15 +1,50 @@
-// ========== AI COMPANION CHAT ==========
+// ========== AI COMPANION CHAT (floating widget) ==========
+
+let chatPanelOpen = false;
+
+function toggleChatPanel(open) {
+    const panel = document.getElementById('chatPanel');
+    const fab = document.getElementById('chatFab');
+    if (!panel || !fab) return;
+
+    chatPanelOpen = open === undefined ? !chatPanelOpen : open;
+
+    panel.classList.toggle('open', chatPanelOpen);
+    panel.setAttribute('aria-hidden', String(!chatPanelOpen));
+    fab.classList.toggle('open', chatPanelOpen);
+    fab.setAttribute('aria-expanded', String(chatPanelOpen));
+
+    if (chatPanelOpen) {
+        // Opening clears the unread nudge and drops focus straight into the box.
+        fab.classList.remove('has-unread');
+        const messages = document.getElementById('chatMessages');
+        if (messages) messages.scrollTop = messages.scrollHeight;
+        // Focus has to wait a frame: the panel is still visibility:hidden at
+        // this point in the transition, and hidden elements can't take focus.
+        requestAnimationFrame(() => document.getElementById('chatInput').focus());
+    }
+}
 
 async function setupChat() {
     const form = document.getElementById('chatForm');
     const input = document.getElementById('chatInput');
+    const fab = document.getElementById('chatFab');
+    const closeBtn = document.getElementById('chatCloseBtn');
 
     setupSpeechToText('chatInputMicBtn', 'chatInput');
+
+    fab.addEventListener('click', () => toggleChatPanel());
+    closeBtn.addEventListener('click', () => toggleChatPanel(false));
+
+    // Escape closes the panel, matching how the other modals behave.
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && chatPanelOpen) toggleChatPanel(false);
+    });
 
     // Auto-grow the textarea as the user types
     input.addEventListener('input', () => {
         input.style.height = 'auto';
-        input.style.height = Math.min(input.scrollHeight, 140) + 'px';
+        input.style.height = Math.min(input.scrollHeight, 120) + 'px';
     });
 
     input.addEventListener('keydown', (e) => {
@@ -83,6 +118,11 @@ function appendChatMessage(role, content) {
     state.chatMessages.push({ role, content });
     container.insertAdjacentHTML('beforeend', chatBubbleHtml(role, content));
     container.scrollTop = container.scrollHeight;
+
+    // A reply that lands while the panel is closed would otherwise go unnoticed.
+    if (role === 'assistant' && !chatPanelOpen) {
+        document.getElementById('chatFab').classList.add('has-unread');
+    }
 }
 
 function setChatTyping(isTyping) {
