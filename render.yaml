@@ -13,7 +13,9 @@ services:
     plan: starter          # required for the disk below; 'free' has no persistent storage
     region: oregon
     branch: main
-    buildCommand: npm install --prefix server
+    # The landing page is a React bundle built into client/landing, so it has
+    # to be built on deploy - the built output is not committed.
+    buildCommand: npm install --prefix server && npm install --prefix web && npm run build --prefix web
     startCommand: npm start --prefix server
     healthCheckPath: /health
 

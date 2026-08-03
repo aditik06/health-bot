@@ -51,12 +51,35 @@ deliberately minimal and first-party:
 ### Setup
 
 ```bash
-cd server
-npm install
-npm start
+npm install --prefix server
+npm install --prefix web
+npm run build --prefix web   # builds the landing page into client/landing
+npm start --prefix server
 ```
 
-Open `http://localhost:3000` and register an account. The server serves the frontend and the API from one process; a SQLite database is created automatically at `server/data.sqlite` on first run.
+Open `http://localhost:3000`. You'll land on the marketing page; **Get started** takes
+you to registration. The server serves the landing page, the app, and the API from one
+process, and a SQLite database is created automatically on first run.
+
+If you skip the `web` build the server still runs — it just serves the app directly at
+`/` and logs a warning, so the backend is usable without the frontend toolchain.
+
+| Route | Serves |
+|---|---|
+| `/` | React landing page |
+| `/login` | Login / registration (`#register` opens the sign-up tab) |
+| `/dashboard.html` | The app |
+| `/health` | Health check |
+| `/api/*` | REST API |
+
+### Working on the landing page
+
+```bash
+npm run dev --prefix web
+```
+
+Vite serves it at `http://localhost:5173` with hot reload, proxying `/api` to the
+Express server on port 3000 — run both side by side.
 
 ### Enabling the AI companion (optional)
 
@@ -110,6 +133,14 @@ host, the requirements are:
 ## Project Structure
 
 ```
+web/                    React landing page (Vite)
+├── index.html
+└── src/
+    ├── App.jsx
+    ├── content.js       Page copy, kept out of the components
+    ├── styles.css
+    └── components/      Nav, Hero, Features, HowItWorks, Faq, Footer
+
 client/                 Static frontend
 ├── index.html          Login / registration
 ├── dashboard.html       Main app
@@ -147,7 +178,8 @@ All optional except the AI key, which only gates the chat feature.
 
 ## Tech Stack
 
-- **Frontend** — HTML, CSS, vanilla JavaScript
+- **Landing page** — React 18 + Vite, in `web/`
+- **App frontend** — HTML, CSS, vanilla JavaScript (React migration in progress)
 - **Backend** — Node.js, Express
 - **Database** — SQLite via the built-in `node:sqlite` module
 - **Auth** — bcrypt password hashing, JWT sessions
