@@ -49,6 +49,12 @@ function initLoginPage() {
         loginForm.classList.add('hidden');
     });
 
+    // The landing page's "Get started" links arrive at /login#register, so open
+    // on the sign-up tab instead of making the user click across.
+    if (window.location.hash === '#register') {
+        registerBtn.click();
+    }
+
     // Show pregnancy date field if pregnant
     const pregnancyRadios = document.querySelectorAll('input[name="pregnancyStatus"]');
     pregnancyRadios.forEach(radio => {

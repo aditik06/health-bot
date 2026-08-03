@@ -1,3 +1,4 @@
+const fs = require('fs');
 const path = require('path');
 const express = require('express');
 const cors = require('cors');
@@ -40,9 +41,31 @@ app.use((err, req, res, next) => {
 });
 
 const CLIENT_DIR = path.join(__dirname, '..', 'client');
+const LANDING_DIR = path.join(CLIENT_DIR, 'landing');
+const AUTH_PAGE = path.join(CLIENT_DIR, 'index.html');
+
+// The marketing landing page is the front door. It's a built React bundle, so
+// it only exists after `npm run build --prefix web`; fall back to the auth page
+// rather than 404ing a fresh checkout that hasn't built the frontend yet.
+const hasLanding = fs.existsSync(path.join(LANDING_DIR, 'index.html'));
+if (!hasLanding) {
+  console.warn('Landing page not built - serving the app at /. Run: npm run build --prefix web');
+}
+
+app.get('/', (req, res) => {
+  res.sendFile(hasLanding ? path.join(LANDING_DIR, 'index.html') : AUTH_PAGE);
+});
+
+// Friendly alias for the auth screen; '#register' opens the sign-up tab.
+app.get('/login', (req, res) => res.sendFile(AUTH_PAGE));
+
+app.use('/landing', express.static(LANDING_DIR));
 app.use(express.static(CLIENT_DIR));
+
+// Anything else that isn't an API call falls through to the app shell, so
+// deep links and refreshes keep working.
 app.get(/^\/(?!api).*/, (req, res) => {
-  res.sendFile(path.join(CLIENT_DIR, 'index.html'));
+  res.sendFile(AUTH_PAGE);
 });
 
 app.listen(PORT, () => {
