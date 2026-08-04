@@ -1,76 +1,59 @@
 // Page copy kept separate from layout so wording can be edited without
 // touching component code.
 
-export const FEATURES = [
+export const HERO = {
+    eyebrow: 'Bloom',
+    headline: 'Understand your body.',
+    sub: 'One place for your cycle, your pregnancy, and everything in between - with a companion that’s there whenever you need to talk.'
+};
+
+// One full-bleed "story" per major capability - alternating image side, like a
+// product page walking through what the thing actually does.
+export const STORIES = [
     {
-        icon: '📅',
-        title: 'Cycle tracking that learns',
-        body: 'Log a period and predictions adjust to your actual history rather than a textbook 28-day assumption. See period, fertile, and ovulation days at a glance.'
+        id: 'cycle',
+        eyebrow: 'Cycle tracking',
+        headline: 'Know what’s coming, before it does.',
+        body: 'Log a period and your predictions adjust to your real history - not a textbook 28-day guess. See your period, fertile window, and ovulation at a glance, and watch the picture get sharper every cycle.',
+        visual: 'calendar',
+        align: 'left'
     },
     {
-        icon: '🤰',
-        title: 'Week-by-week pregnancy',
-        body: "Due date, baby size, what's developing this week, weight tracking, and milestones - plus a kick counter and contraction timer for the final stretch."
+        id: 'pregnancy',
+        eyebrow: 'Pregnancy',
+        headline: 'Every week, explained.',
+        body: 'Due date, baby size, what’s developing right now, your weight over time, and the milestones ahead - all in one view that updates as you go, right through to the kick counter and contraction timer.',
+        visual: 'pregnancy',
+        align: 'right'
     },
     {
-        icon: '💊',
-        title: 'Medications & prescriptions',
-        body: 'Keep your medications and doses in one place, upload prescription photos, and mark doses as taken so you can see what you have already had today.'
+        id: 'companion',
+        eyebrow: 'AI companion',
+        headline: 'Someone to ask. Someone to talk to.',
+        body: 'Wondering if what you’re feeling is normal? Ask. Just want to talk about your day? That works too. Your companion floats on every page, so it’s never more than a tap away.',
+        visual: 'chat',
+        align: 'left'
     },
     {
-        icon: '📔',
-        title: 'Mood & symptom diary',
-        body: 'Note how you are feeling and what you are experiencing, then look back over the week to spot patterns you would otherwise forget.'
-    },
-    {
-        icon: '💬',
-        title: 'An AI companion, always there',
-        body: "Ask about your cycle, your symptoms, or what to expect next - or just talk when you want someone to listen. It's on every page, whenever you need it."
-    },
-    {
-        icon: '🥗',
-        title: 'Guidance that fits your phase',
-        body: 'Diet and exercise suggestions tuned to where you are in your cycle or trimester, plus space for notes your doctor has given you.'
+        id: 'everyday',
+        eyebrow: 'Medications & diary',
+        headline: 'Everything, remembered.',
+        body: 'Medications, doses taken, symptoms, moods, appointments - the things you’d otherwise have to hold in your head, or dig up from three different apps. Look back a week and the pattern is right there.',
+        visual: 'diary',
+        align: 'right'
     }
 ];
 
-export const STEPS = [
-    {
-        number: '1',
-        title: 'Tell us where you are',
-        body: 'Your last period, your cycle length, and whether you are pregnant or trying. Takes about a minute.'
-    },
-    {
-        number: '2',
-        title: 'Log as you go',
-        body: 'Periods, symptoms, moods, medications, appointments. The more you log, the better the predictions get.'
-    },
-    {
-        number: '3',
-        title: 'See the pattern',
-        body: 'Your dashboard shows what phase you are in, what is coming, and what tends to happen for you around this time.'
-    }
-];
+export const PRIVACY = {
+    eyebrow: 'Privacy',
+    headline: 'Your data. Only yours.',
+    body: 'What you log stays in your account, behind your password. It’s never sold. You can export everything or delete your account entirely, any time, from Settings.'
+};
 
-export const FAQS = [
-    {
-        q: 'Is my health data private?',
-        a: 'Your data lives in your own account behind a password and is never sold or shared. Messages you send to the AI companion are processed by Anthropic to generate a reply. You can delete your account and all of its data at any time from Settings.'
-    },
-    {
-        q: 'Is this a substitute for medical advice?',
-        a: 'No. It is a tracking and information tool, not a doctor. It will not diagnose you or recommend medication. For anything urgent - heavy bleeding, severe pain, or reduced fetal movement - contact your doctor or emergency services.'
-    },
-    {
-        q: 'Do I need to be pregnant to use it?',
-        a: 'Not at all. Most of the app is built around cycle tracking, symptoms, medications, and mood. Pregnancy features appear only if you tell us you are pregnant, and you can change that any time in Settings.'
-    },
-    {
-        q: 'What if my cycle is irregular?',
-        a: 'Predictions are based on the cycles you actually log, not a fixed assumption, so they adapt as your history builds up. Irregular cycles will give wider-ranging predictions, which is expected.'
-    },
-    {
-        q: 'Does it cost anything?',
-        a: 'No. This is an open-source project you can run yourself, and the source is available on GitHub.'
-    }
-];
+export const CTA = {
+    headline: 'Start understanding your body.',
+    sub: 'Free. Private. Takes about a minute to set up.'
+};
+
+const REPO_URL = 'https://github.com/aditik06/health-bot';
+export const LINKS = { repo: REPO_URL };

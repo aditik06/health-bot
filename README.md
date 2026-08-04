@@ -139,7 +139,7 @@ web/                    React landing page (Vite)
     ├── App.jsx
     ├── content.js       Page copy, kept out of the components
     ├── styles.css
-    └── components/      Nav, Hero, Features, HowItWorks, Faq, Footer
+    └── components/      Nav, Hero, StorySection, PrivacySection, FinalCta, Footer, MockVisuals
 
 client/                 Static frontend
 ├── index.html          Login / registration

@@ -1,9 +1,10 @@
 import Nav from './components/Nav.jsx';
 import Hero from './components/Hero.jsx';
-import Features from './components/Features.jsx';
-import HowItWorks from './components/HowItWorks.jsx';
-import Faq from './components/Faq.jsx';
+import StorySection from './components/StorySection.jsx';
+import PrivacySection from './components/PrivacySection.jsx';
+import FinalCta from './components/FinalCta.jsx';
 import Footer from './components/Footer.jsx';
+import { STORIES } from './content.js';
 
 // The auth screen is still the existing vanilla page; '#register' tells it to
 // open on the sign-up tab rather than login.
@@ -16,11 +17,13 @@ export default function App() {
             <Nav loginHref={LOGIN_HREF} registerHref={REGISTER_HREF} />
             <main>
                 <Hero loginHref={LOGIN_HREF} registerHref={REGISTER_HREF} />
-                <Features />
-                <HowItWorks registerHref={REGISTER_HREF} />
-                <Faq />
+                {STORIES.map((story) => (
+                    <StorySection key={story.id} {...story} />
+                ))}
+                <PrivacySection />
+                <FinalCta loginHref={LOGIN_HREF} registerHref={REGISTER_HREF} />
             </main>
-            <Footer loginHref={LOGIN_HREF} registerHref={REGISTER_HREF} />
+            <Footer loginHref={LOGIN_HREF} />
         </>
     );
 }
