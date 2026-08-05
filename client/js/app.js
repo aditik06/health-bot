@@ -55,6 +55,21 @@ function initLoginPage() {
         registerBtn.click();
     }
 
+    // Verification links (clicked from the email) land here as a plain
+    // browser navigation with a query flag rather than a fetch response.
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('verified') === '1') {
+        showAuthNotice('success', '✅ Email verified! You can log in now.');
+    } else if (params.get('verified') === '0') {
+        const reason = params.get('reason') === 'expired'
+            ? 'That verification link has expired. Enter your email below to get a new one.'
+            : 'That verification link is invalid. Enter your email below to get a new one.';
+        showAuthNotice('error', `⚠️ ${reason}`, { showResend: true });
+    }
+    if (params.get('verified')) {
+        window.history.replaceState({}, '', window.location.pathname + window.location.hash);
+    }
+
     // Show pregnancy date field if pregnant
     const pregnancyRadios = document.querySelectorAll('input[name="pregnancyStatus"]');
     pregnancyRadios.forEach(radio => {
@@ -81,7 +96,11 @@ function initLoginPage() {
             setToken(result.token);
             window.location.href = 'dashboard.html';
         } catch (err) {
-            alert(err.message || 'Invalid credentials! Please try again or register.');
+            if (err.data && err.data.requiresVerification) {
+                showAuthNotice('error', `⚠️ ${err.message}`, { showResend: true, email });
+            } else {
+                alert(err.message || 'Invalid credentials! Please try again or register.');
+            }
         }
     });
 
@@ -106,6 +125,12 @@ function initLoginPage() {
 
         try {
             const result = await api.post('/auth/register', payload);
+            if (result.requiresVerification) {
+                registrationForm.reset();
+                showAuthNotice('success', `📧 ${result.message}`, { showResend: true, email: payload.email });
+                loginBtn.click();
+                return;
+            }
             setToken(result.token);
             alert('Registration successful! Welcome aboard! 🌸');
             window.location.href = 'dashboard.html';
@@ -113,6 +138,40 @@ function initLoginPage() {
             alert(err.message || 'Registration failed. Please try again.');
         }
     });
+}
+
+// Shows a banner above the login/register forms - used for verification
+// status messages that need more than a one-off alert() (e.g. a resend
+// button). `type` is 'success' or 'error'.
+function showAuthNotice(type, message, { showResend = false, email = '' } = {}) {
+    const notice = document.getElementById('authNotice');
+    if (!notice) return;
+
+    notice.className = `auth-notice auth-notice-${type}`;
+    notice.innerHTML = `<p>${message}</p>`;
+
+    if (showResend) {
+        const wrap = document.createElement('div');
+        wrap.className = 'auth-notice-resend';
+        wrap.innerHTML = `
+            <input type="email" placeholder="Your email" value="${email.replace(/"/g, '&quot;')}" />
+            <button type="button">Resend verification email</button>
+        `;
+        const input = wrap.querySelector('input');
+        const button = wrap.querySelector('button');
+        button.addEventListener('click', async () => {
+            if (!input.value) { input.focus(); return; }
+            button.disabled = true;
+            button.textContent = 'Sending...';
+            try {
+                const result = await api.post('/auth/resend-verification', { email: input.value });
+                showAuthNotice('success', `📧 ${result.message}`);
+            } catch (err) {
+                showAuthNotice('error', `⚠️ ${err.message || 'Could not resend the email.'}`, { showResend: true, email: input.value });
+            }
+        });
+        notice.appendChild(wrap);
+    }
 }
 
 // ========== DASHBOARD INITIALIZATION ==========

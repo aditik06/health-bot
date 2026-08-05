@@ -33,3 +33,13 @@ services:
         generateValue: true   # generated once by Render, then held stable
       - key: ANTHROPIC_API_KEY
         sync: false           # set manually in the dashboard; never commit this
+      - key: APP_URL
+        value: https://health-bot.onrender.com   # update if you rename the service; used in verification email links
+      # Optional - set these in the dashboard to enable email verification on
+      # signup (see #3). Left unset, accounts are auto-verified.
+      - key: SMTP_HOST
+        sync: false
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASS
+        sync: false

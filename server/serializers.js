@@ -17,6 +17,7 @@ function userToJson(row) {
     emergencyPhone: row.emergency_phone,
     darkMode: !!row.dark_mode,
     dietaryNotes: row.dietary_notes,
+    emailVerified: !!row.email_verified,
     createdAt: row.created_at
   };
 }

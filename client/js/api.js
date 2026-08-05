@@ -49,7 +49,9 @@ async function apiRequest(path, { method = 'GET', body, isFormData = false } = {
     const data = contentType.includes('application/json') ? await response.json() : null;
 
     if (!response.ok) {
-        throw new Error((data && data.error) || `Request failed (${response.status})`);
+        const error = new Error((data && data.error) || `Request failed (${response.status})`);
+        error.data = data; // lets callers read extra fields like requiresVerification
+        throw error;
     }
 
     return data;

@@ -25,6 +25,7 @@ A full-stack web app for tracking menstrual cycles, pregnancy, and day-to-day he
 
 **Account & appearance**
 - Real accounts with hashed passwords and JWT auth — your data lives in a database, not `localStorage`
+- Optional email verification on signup (see Environment Variables) — without it configured, accounts are auto-verified rather than locked out
 - Light and dark themes, data export/import, and account deletion
 
 ## Usage Analytics
@@ -175,6 +176,10 @@ All optional except the AI key, which only gates the chat feature.
 | `JWT_SECRET` | auto-generated, stored in `$DATA_DIR/.jwt_secret` | Signs auth tokens. Set explicitly in production. |
 | `ANTHROPIC_API_KEY` | none | Enables the AI companion chat |
 | `ANTHROPIC_CHAT_MODEL` | `claude-opus-5` | Model used for chat |
+| `SMTP_HOST` / `SMTP_USER` / `SMTP_PASS` | none | Set all three to enable email verification on signup. Without them, accounts are auto-verified and the verification link is only logged to the console. |
+| `SMTP_PORT` | `587` | SMTP port |
+| `SMTP_FROM` | `SMTP_USER` | From address on verification emails |
+| `APP_URL` | `http://localhost:$PORT` | Base URL used to build the link in verification emails — set this to your real domain in production |
 
 ## Tech Stack
 

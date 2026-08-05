@@ -25,6 +25,9 @@ CREATE TABLE IF NOT EXISTS users (
   emergency_phone TEXT,
   dark_mode INTEGER DEFAULT 0,
   dietary_notes TEXT,
+  email_verified INTEGER DEFAULT 0,
+  verification_token TEXT,
+  verification_token_expires TEXT,
   created_at TEXT DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))
 );
 
@@ -132,5 +135,19 @@ CREATE TABLE IF NOT EXISTS analytics_events (
 CREATE INDEX IF NOT EXISTS idx_analytics_event ON analytics_events(event);
 CREATE INDEX IF NOT EXISTS idx_analytics_created_at ON analytics_events(created_at);
 `);
+
+// CREATE TABLE IF NOT EXISTS only helps on a fresh database - it does nothing
+// for columns added to the schema after a database already exists (e.g. an
+// already-deployed instance). Add any such columns here, guarded by a check
+// against the live schema so this stays a no-op once they're present.
+const userColumns = new Set(db.prepare('PRAGMA table_info(users)').all().map((c) => c.name));
+const userMigrations = [
+  ['email_verified', "ALTER TABLE users ADD COLUMN email_verified INTEGER DEFAULT 0"],
+  ['verification_token', "ALTER TABLE users ADD COLUMN verification_token TEXT"],
+  ['verification_token_expires', "ALTER TABLE users ADD COLUMN verification_token_expires TEXT"]
+];
+for (const [column, statement] of userMigrations) {
+  if (!userColumns.has(column)) db.exec(statement);
+}
 
 module.exports = db;

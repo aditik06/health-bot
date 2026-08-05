@@ -24,10 +24,33 @@ function loadOrCreateSecret() {
   return secret;
 }
 
+const PORT = process.env.PORT || 3000;
+
+// Email verification needs a real mail transport to send anything. Without
+// one configured, gating login on a link we can never deliver would just
+// lock every user out - so verification is only enforced when all three of
+// these are set (see server/mailer.js).
+const SMTP_HOST = process.env.SMTP_HOST || null;
+const SMTP_PORT = process.env.SMTP_PORT ? Number(process.env.SMTP_PORT) : 587;
+const SMTP_USER = process.env.SMTP_USER || null;
+const SMTP_PASS = process.env.SMTP_PASS || null;
+const SMTP_FROM = process.env.SMTP_FROM || SMTP_USER;
+const EMAIL_ENABLED = !!(SMTP_HOST && SMTP_USER && SMTP_PASS);
+
+// Base URL used to build the link in verification emails.
+const APP_URL = (process.env.APP_URL || `http://localhost:${PORT}`).replace(/\/$/, '');
+
 module.exports = {
   DATA_DIR,
   JWT_SECRET: loadOrCreateSecret(),
-  PORT: process.env.PORT || 3000,
+  PORT,
+  APP_URL,
   ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY || null,
-  ANTHROPIC_CHAT_MODEL: process.env.ANTHROPIC_CHAT_MODEL || 'claude-opus-5'
+  ANTHROPIC_CHAT_MODEL: process.env.ANTHROPIC_CHAT_MODEL || 'claude-opus-5',
+  SMTP_HOST,
+  SMTP_PORT,
+  SMTP_USER,
+  SMTP_PASS,
+  SMTP_FROM,
+  EMAIL_ENABLED
 };
