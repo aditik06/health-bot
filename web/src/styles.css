@@ -273,9 +273,23 @@ img { max-width: 100%; }
 
 .story-visual { display: flex; justify-content: center; }
 
-/* Reveal-on-scroll: fade + rise once, then stay put. */
-.reveal { opacity: 0; transform: translateY(36px); transition: opacity 0.8s ease, transform 0.8s ease; }
-.reveal-visible { opacity: 1; transform: translateY(0); }
+/* Utility classes used by the adapted Motion Primitives text-effect
+   component (motion-primitives/text-effect.jsx) - kept minimal rather than
+   pulling in Tailwind for four class names. */
+.block { display: block; }
+.inline-block { display: inline-block; }
+.whitespace-pre { white-space: pre; }
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
 
 /* ---------- Mock product frames ---------- */
 .mock-frame {
@@ -510,5 +524,7 @@ img { max-width: 100%; }
 @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }
     * { transition: none !important; animation: none !important; }
-    .reveal { opacity: 1; transform: none; }
+    /* Motion-driven elements (Hero, StorySection, PrivacySection, FinalCta)
+       aren't CSS transitions, so they're covered separately by
+       <MotionConfig reducedMotion="user"> in main.jsx instead of here. */
 }
