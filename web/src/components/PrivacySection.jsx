@@ -17,6 +17,8 @@ export default function PrivacySection() {
             viewOptions={{ amount: 0.2, margin: '0px 0px -10% 0px' }}
         >
             <section id="privacy" className="privacy-band">
+                <div className="bloom-orb orb-1" aria-hidden="true" />
+                <div className="bloom-orb orb-2" aria-hidden="true" />
                 <p className="story-eyebrow story-eyebrow-light">{PRIVACY.eyebrow}</p>
                 <h2>{PRIVACY.headline}</h2>
                 <p className="privacy-body">{PRIVACY.body}</p>

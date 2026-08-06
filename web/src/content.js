@@ -3,7 +3,11 @@
 
 export const HERO = {
     eyebrow: 'Bloom',
-    headline: 'Understand your body.',
+    // Split so the hero can render the second half as an accent-colored
+    // word (see Hero.jsx) - kept as two strings rather than markup so
+    // TextEffect's word-by-word reveal still works on plain text.
+    headlineLead: 'Understand',
+    headlineAccent: 'your body.',
     sub: 'One place for your cycle, your pregnancy, and everything in between - with a companion that’s there whenever you need to talk.'
 };
 

@@ -2,6 +2,15 @@
 // as isolated, non-interactive "frames" so each one can be dropped into a
 // story section at a consistent size.
 
+function FrameTag({ children }) {
+    return (
+        <span className="mock-frame-tag">
+            <span className="mock-frame-tag-dot" />
+            {children}
+        </span>
+    );
+}
+
 export function MockCalendar() {
     const days = Array.from({ length: 35 }, (_, i) => i - 2); // leading blanks
     const period = [3, 4, 5, 6, 7];
@@ -11,12 +20,7 @@ export function MockCalendar() {
 
     return (
         <div className="mock-frame mock-calendar">
-            <div className="mock-frame-header">
-                <span className="mock-dot mock-dot-red" />
-                <span className="mock-dot mock-dot-amber" />
-                <span className="mock-dot mock-dot-green" />
-                <span className="mock-frame-title">August</span>
-            </div>
+            <div className="mock-frame-header"><FrameTag>August</FrameTag></div>
             <div className="mock-calendar-grid">
                 {days.map((d, i) => {
                     if (d < 1 || d > 31) return <span key={i} className="mock-cal-cell mock-cal-blank" />;
@@ -40,12 +44,7 @@ export function MockCalendar() {
 export function MockPregnancy() {
     return (
         <div className="mock-frame mock-pregnancy">
-            <div className="mock-frame-header">
-                <span className="mock-dot mock-dot-red" />
-                <span className="mock-dot mock-dot-amber" />
-                <span className="mock-dot mock-dot-green" />
-                <span className="mock-frame-title">Pregnancy</span>
-            </div>
+            <div className="mock-frame-header"><FrameTag>Week 24</FrameTag></div>
             <div className="mock-pregnancy-body">
                 <div className="mock-ring" style={{ '--pct': '62%' }}>
                     <span className="mock-ring-week">Week 24</span>
@@ -71,12 +70,7 @@ export function MockPregnancy() {
 export function MockChat() {
     return (
         <div className="mock-frame mock-chat">
-            <div className="mock-frame-header">
-                <span className="mock-dot mock-dot-red" />
-                <span className="mock-dot mock-dot-amber" />
-                <span className="mock-dot mock-dot-green" />
-                <span className="mock-frame-title">Companion</span>
-            </div>
+            <div className="mock-frame-header"><FrameTag>Companion</FrameTag></div>
             <div className="mock-chat-body">
                 <div className="mock-bubble mock-bubble-user">Is it normal to feel this tired at 24 weeks?</div>
                 <div className="mock-bubble mock-bubble-ai">Completely - your body's working hard. Rest when you can, and mention it at your next check-up if it feels extreme.</div>
@@ -94,12 +88,7 @@ export function MockDiary() {
     ];
     return (
         <div className="mock-frame mock-diary">
-            <div className="mock-frame-header">
-                <span className="mock-dot mock-dot-red" />
-                <span className="mock-dot mock-dot-amber" />
-                <span className="mock-dot mock-dot-green" />
-                <span className="mock-frame-title">Today</span>
-            </div>
+            <div className="mock-frame-header"><FrameTag>Today</FrameTag></div>
             <div className="mock-diary-body">
                 {rows.map((r) => (
                     <div className="mock-diary-row" key={r.label}>

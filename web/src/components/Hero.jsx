@@ -5,24 +5,47 @@ import { HERO } from '../content.js';
 export default function Hero({ loginHref, registerHref }) {
     return (
         <section className="hero" id="top">
-            <div className="hero-glow" aria-hidden="true" />
+            <div className="bloom-orb orb-1" aria-hidden="true" />
+            <div className="bloom-orb orb-2" aria-hidden="true" />
+            <div className="bloom-orb orb-3" aria-hidden="true" />
+            <div className="hero-grain" aria-hidden="true" />
+
             <div className="hero-copy">
-                <motion.p
-                    className="hero-eyebrow"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.6 }}
+                {/* rotate is baked into the animate props (not left to the CSS
+                    class) because Motion's own inline transform would
+                    otherwise overwrite the CSS transform: rotate(...) outright
+                    rather than compose with it. */}
+                <motion.span
+                    className="hero-tag"
+                    initial={{ opacity: 0, y: -8, rotate: -2.5 }}
+                    animate={{ opacity: 1, y: 0, rotate: -2.5 }}
+                    transition={{ duration: 0.5 }}
                 >
+                    <span className="hero-tag-dot" />
                     {HERO.eyebrow}
-                </motion.p>
-                <TextEffect as="h1" per="word" preset="fade-in-blur" delay={0.15} speedReveal={1.4}>
-                    {HERO.headline}
-                </TextEffect>
+                </motion.span>
+
+                <h1>
+                    <TextEffect as="span" per="word" preset="fade-in-blur" delay={0.15} speedReveal={1.6}>
+                        {HERO.headlineLead}
+                    </TextEffect>{' '}
+                    <TextEffect
+                        as="span"
+                        per="word"
+                        preset="fade-in-blur"
+                        delay={0.45}
+                        speedReveal={1.6}
+                        className="hero-accent-word"
+                    >
+                        {HERO.headlineAccent}
+                    </TextEffect>
+                </h1>
+
                 <motion.p
                     className="hero-sub"
                     initial={{ opacity: 0, y: 12 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6, delay: 0.7 }}
+                    transition={{ duration: 0.6, delay: 0.75 }}
                 >
                     {HERO.sub}
                 </motion.p>
@@ -31,7 +54,7 @@ export default function Hero({ loginHref, registerHref }) {
                     className="hero-actions"
                     initial={{ opacity: 0, y: 12 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6, delay: 0.9 }}
+                    transition={{ duration: 0.6, delay: 0.95 }}
                 >
                     <a className="btn btn-primary btn-lg" href={registerHref}>
                         Get started - it's free

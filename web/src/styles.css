@@ -1,28 +1,58 @@
 /* Landing page styles. Brand tokens mirror client/css/style.css so the
    marketing page and the app read as one product. Layout is a cinematic,
-   full-bleed scroll story (hero -> one capability per section -> sign up),
-   not a conventional feature-grid SaaS page. */
+   full-bleed scroll story (hero -> one capability per section -> sign up).
+
+   Palette: "Bloom, unfiltered" - deep plum ground with an organic glow of
+   bloom-pink, peach, and lilac instead of a flat corporate gradient, paired
+   with Fraunces (a soft/wonky editorial serif) for headlines and Plus
+   Jakarta Sans for everything else. Both fonts are self-hosted from
+   src/assets/fonts (Latin subset only, OFL-licensed - see OFL-NOTICE.md
+   there) rather than pulled from a font CDN. */
+
+@font-face {
+    font-family: 'Fraunces Display';
+    font-style: normal;
+    font-weight: 600;
+    font-display: swap;
+    src: url('./assets/fonts/fraunces-600.woff2') format('woff2');
+}
+
+@font-face {
+    font-family: 'Fraunces Display';
+    font-style: italic;
+    font-weight: 500;
+    font-display: swap;
+    src: url('./assets/fonts/fraunces-500-italic.woff2') format('woff2');
+}
+
+@font-face {
+    font-family: 'Jakarta';
+    font-style: normal;
+    font-weight: 200 800;
+    font-display: swap;
+    src: url('./assets/fonts/jakarta-variable.woff2') format('woff2');
+}
 
 *, *::before, *::after { box-sizing: border-box; }
 
 :root {
-    --primary: #ff6b9d;
-    --primary-dark: #ff5287;
-    --secondary: #4ecdc4;
-    --accent: #95e1d3;
+    --primary: #ff4fa0;
+    --primary-dark: #e63d8c;
+    --secondary: #ffb37a;
+    --accent: #c9b6f2;
 
-    --text: #2c3e50;
-    --text-muted: #64748b;
+    --text: #241629;
+    --text-muted: #6c5f72;
     --bg: #ffffff;
-    --bg-soft: #fdf7f9;
-    --border: #eceff3;
+    --bg-soft: #fdf3f8;
+    --border: #ecdfe8;
 
-    --dark-bg: #1a1226;
-    --dark-bg-2: #2a1830;
+    --dark-bg: #170d1a;
+    --dark-bg-2: #241629;
 
-    --shadow-sm: 0 2px 10px rgba(44, 62, 80, 0.07);
-    --shadow-md: 0 10px 30px rgba(44, 62, 80, 0.1);
-    --shadow-lg: 0 24px 60px rgba(44, 62, 80, 0.16);
+    --shadow-sm: 0 2px 10px rgba(36, 22, 41, 0.07);
+    --shadow-md: 0 10px 30px rgba(36, 22, 41, 0.11);
+    --shadow-lg: 0 24px 60px rgba(36, 22, 41, 0.18);
 
     --radius: 14px;
     --radius-lg: 22px;
@@ -31,11 +61,11 @@
 
 @media (prefers-color-scheme: dark) {
     :root {
-        --text: #eef1f5;
-        --text-muted: #a3adba;
-        --bg: #14161f;
-        --bg-soft: #1b1e2a;
-        --border: #2a2f3d;
+        --text: #f4eef7;
+        --text-muted: #b3a6bb;
+        --bg: #17121c;
+        --bg-soft: #241b2a;
+        --border: #332a38;
         --shadow-sm: 0 2px 10px rgba(0, 0, 0, 0.35);
         --shadow-md: 0 10px 30px rgba(0, 0, 0, 0.45);
         --shadow-lg: 0 24px 60px rgba(0, 0, 0, 0.55);
@@ -46,7 +76,7 @@ html { scroll-behavior: smooth; }
 
 body {
     margin: 0;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Roboto, Helvetica, Arial, sans-serif;
+    font-family: 'Jakarta', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     color: var(--text);
     background: var(--bg);
     line-height: 1.65;
@@ -54,7 +84,13 @@ body {
     overflow-x: hidden;
 }
 
-h1, h2, h3 { line-height: 1.15; margin: 0 0 0.5em; letter-spacing: -0.02em; }
+h1, h2, h3 {
+    font-family: 'Fraunces Display', Georgia, 'Times New Roman', serif;
+    font-weight: 600;
+    line-height: 1.1;
+    margin: 0 0 0.5em;
+    letter-spacing: -0.005em;
+}
 h2 { font-size: clamp(2rem, 4.4vw, 3.2rem); }
 p { margin: 0 0 1rem; }
 img { max-width: 100%; }
@@ -68,8 +104,9 @@ img { max-width: 100%; }
     padding: 12px 24px;
     border-radius: 999px;
     border: 2px solid transparent;
+    font-family: 'Jakarta', sans-serif;
     font-size: 0.98rem;
-    font-weight: 600;
+    font-weight: 700;
     text-decoration: none;
     cursor: pointer;
     transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease, border-color 0.18s ease, color 0.18s ease;
@@ -80,7 +117,7 @@ img { max-width: 100%; }
 .btn-lg { padding: 15px 32px; font-size: 1.05rem; }
 
 .btn-primary {
-    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    background: var(--primary);
     color: #fff;
     box-shadow: var(--shadow-md);
 }
@@ -132,8 +169,9 @@ img { max-width: 100%; }
     display: flex;
     align-items: center;
     gap: 9px;
-    font-weight: 700;
-    font-size: 1.2rem;
+    font-family: 'Fraunces Display', Georgia, serif;
+    font-weight: 600;
+    font-size: 1.25rem;
     color: var(--text);
     text-decoration: none;
     transition: color 0.3s ease;
@@ -167,37 +205,68 @@ img { max-width: 100%; }
     justify-content: center;
     text-align: center;
     padding: 120px 24px 80px;
-    background: radial-gradient(ellipse 120% 90% at 50% 0%, var(--dark-bg-2), var(--dark-bg) 65%);
+    background: var(--dark-bg);
     color: #fff;
     overflow: hidden;
+    isolation: isolate;
 }
 
-.hero-glow {
+/* Soft blurred color fields instead of one flat gradient - reads as an
+   organic bloom rather than an app-UI backdrop. */
+.bloom-orb {
     position: absolute;
-    inset: -20% -10% auto -10%;
-    height: 70%;
-    background:
-        radial-gradient(600px 380px at 20% 20%, rgba(255, 107, 157, 0.35), transparent 65%),
-        radial-gradient(560px 360px at 80% 10%, rgba(78, 205, 196, 0.3), transparent 65%);
-    filter: blur(10px);
+    border-radius: 50%;
+    filter: blur(70px);
     pointer-events: none;
+    z-index: -1;
+}
+.orb-1 { width: 46vw; height: 46vw; max-width: 620px; max-height: 620px; top: -18%; right: -10%; background: radial-gradient(circle at 35% 35%, var(--primary), transparent 68%); opacity: 0.8; }
+.orb-2 { width: 38vw; height: 38vw; max-width: 500px; max-height: 500px; bottom: -16%; left: -10%; background: radial-gradient(circle at 60% 40%, var(--accent), transparent 70%); opacity: 0.5; }
+.orb-3 { width: 26vw; height: 26vw; max-width: 340px; max-height: 340px; top: 32%; right: 6%; background: radial-gradient(circle at 50% 50%, var(--secondary), transparent 72%); opacity: 0.45; }
+
+.hero-grain {
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(rgba(255, 255, 255, 0.045) 1px, transparent 1px);
+    background-size: 3px 3px;
+    pointer-events: none;
+    z-index: -1;
 }
 
 .hero-copy { position: relative; max-width: 46rem; }
 
-.hero-eyebrow {
-    display: inline-block;
-    font-size: 0.85rem;
+/* Tilted pill instead of a flat uppercase label - a small, deliberately
+   imperfect detail rather than everything sitting dead-square on the grid. */
+.hero-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 0.78rem;
     font-weight: 700;
-    letter-spacing: 0.18em;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.75);
+    color: var(--dark-bg);
+    background: #fff;
+    padding: 7px 15px 7px 12px;
+    border-radius: 999px;
+    margin-bottom: 26px;
+    /* rotation is set via Motion's animate prop in Hero.jsx, not here - a
+       plain CSS transform on a motion element gets overwritten outright
+       rather than composed with Motion's own inline transform. */
+}
+.hero-tag-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--primary); }
+
+.hero h1 {
+    font-weight: 600;
+    font-size: clamp(2.6rem, 7vw, 5rem);
+    letter-spacing: -0.01em;
     margin-bottom: 22px;
 }
 
-.hero h1 {
-    font-size: clamp(2.6rem, 7vw, 5rem);
-    margin-bottom: 22px;
+.hero h1 .hero-accent-word {
+    color: var(--primary);
+    font-style: italic;
+    font-weight: 500;
 }
 
 .hero-sub {
@@ -228,7 +297,7 @@ img { max-width: 100%; }
     height: 8px;
     margin-left: -2px;
     border-radius: 999px;
-    background: #fff;
+    background: var(--primary);
     animation: scrollCue 1.8s ease-in-out infinite;
 }
 
@@ -292,6 +361,8 @@ img { max-width: 100%; }
 }
 
 /* ---------- Mock product frames ---------- */
+/* A couple degrees of rotation, alternating by position, so the cards read
+   as tactile objects dropped onto the page rather than snapped to the grid. */
 .mock-frame {
     width: 100%;
     max-width: 400px;
@@ -300,14 +371,26 @@ img { max-width: 100%; }
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-lg);
     padding: 20px;
+    transform: rotate(-1.5deg);
 }
+.story-reverse .mock-frame { transform: rotate(1.5deg); }
 
-.mock-frame-header { display: flex; align-items: center; gap: 7px; margin-bottom: 18px; }
-.mock-dot { width: 10px; height: 10px; border-radius: 50%; }
-.mock-dot-red { background: #ff5f57; }
-.mock-dot-amber { background: #febc2e; }
-.mock-dot-green { background: #28c840; }
-.mock-frame-title { margin-left: 8px; font-size: 0.82rem; font-weight: 600; color: var(--text-muted); }
+.mock-frame-header { margin-bottom: 18px; }
+.mock-frame-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--dark-bg);
+    background: var(--bg-soft);
+    padding: 5px 12px 5px 9px;
+    border-radius: 999px;
+    transform: rotate(-2deg);
+}
+.mock-frame-tag-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--primary); }
 
 /* Calendar mock */
 .mock-calendar-grid {
@@ -329,16 +412,16 @@ img { max-width: 100%; }
 
 .mock-cal-blank { background: transparent; }
 .mock-cal-period { background: var(--primary); color: #fff; }
-.mock-cal-fertile { background: var(--secondary); opacity: 0.55; color: #fff; }
-.mock-cal-ovulation { background: var(--secondary); color: #fff; }
+.mock-cal-fertile { background: var(--accent); opacity: 0.6; color: var(--dark-bg); }
+.mock-cal-ovulation { background: var(--accent); color: var(--dark-bg); }
 .mock-cal-today { box-shadow: 0 0 0 2px var(--text) inset; }
 
 .mock-legend { display: flex; gap: 16px; font-size: 0.76rem; color: var(--text-muted); flex-wrap: wrap; }
 .mock-legend span { display: inline-flex; align-items: center; gap: 6px; }
 .mock-swatch { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
 .mock-swatch-period { background: var(--primary); }
-.mock-swatch-fertile { background: var(--secondary); opacity: 0.55; }
-.mock-swatch-ovulation { background: var(--secondary); }
+.mock-swatch-fertile { background: var(--accent); opacity: 0.6; }
+.mock-swatch-ovulation { background: var(--accent); }
 
 /* Pregnancy mock */
 .mock-pregnancy-body { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
@@ -352,11 +435,6 @@ img { max-width: 100%; }
     display: grid;
     place-items: center;
     background: conic-gradient(var(--primary) var(--pct), var(--bg-soft) 0);
-}
-
-.mock-ring::before {
-    content: '';
-    position: absolute;
 }
 
 .mock-ring-week {
@@ -428,6 +506,7 @@ img { max-width: 100%; }
 
 /* ---------- Privacy statement band ---------- */
 .privacy-band {
+    position: relative;
     min-height: 60vh;
     display: flex;
     flex-direction: column;
@@ -435,9 +514,14 @@ img { max-width: 100%; }
     justify-content: center;
     text-align: center;
     padding: 100px 24px;
-    background: radial-gradient(ellipse 120% 100% at 50% 100%, var(--dark-bg-2), var(--dark-bg) 65%);
+    background: var(--dark-bg);
     color: #fff;
+    overflow: hidden;
+    isolation: isolate;
 }
+
+/* Calmer than the hero - a single dim glow, not the full three-orb burst. */
+.privacy-band .bloom-orb { opacity: 0.35; filter: blur(90px); }
 
 .privacy-band h2 { max-width: 40rem; }
 
@@ -477,6 +561,7 @@ img { max-width: 100%; }
 }
 
 .footer-brand { display: flex; gap: 12px; align-items: flex-start; }
+.footer-brand strong { font-family: 'Fraunces Display', Georgia, serif; font-weight: 600; font-size: 1.05rem; }
 .footer-brand p { color: var(--text-muted); font-size: 0.9rem; margin: 2px 0 0; }
 
 .footer-links { display: flex; flex-wrap: wrap; gap: 22px; }
@@ -512,6 +597,7 @@ img { max-width: 100%; }
     .story-reverse { direction: ltr; }
     .story-body { margin-inline: auto; }
     .story-visual { order: -1; }
+    .mock-frame, .story-reverse .mock-frame { transform: rotate(-1deg); }
 }
 
 @media (max-width: 520px) {
