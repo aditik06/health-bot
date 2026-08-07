@@ -1,7 +1,7 @@
 {
-  "name": "womens-health-tracker-server",
+  "name": "bloom-server",
   "version": "1.0.0",
-  "description": "Backend API + static server for the Women's Health Tracker",
+  "description": "Backend API + static server for Bloom",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",

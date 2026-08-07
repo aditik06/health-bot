@@ -1,9 +1,9 @@
 {
-  "name": "womens-health-tracker-web",
+  "name": "bloom-web",
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "description": "React landing page for the Women's Health Tracker",
+  "description": "React landing page for Bloom",
   "scripts": {
     "dev": "vite",
     "build": "vite build",

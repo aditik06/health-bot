@@ -1,4 +1,4 @@
-# Women's Health & Pregnancy Tracker
+# Bloom
 
 A full-stack web app for tracking menstrual cycles, pregnancy, and day-to-day health — with a real backend, not just browser storage.
 

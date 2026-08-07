@@ -69,5 +69,5 @@ app.get(/^\/(?!api).*/, (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`Women's Health Tracker running at http://localhost:${PORT}`);
+  console.log(`Bloom running at http://localhost:${PORT}`);
 });
