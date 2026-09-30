@@ -63,9 +63,12 @@
     :root {
         --text: #f4eef7;
         --text-muted: #b3a6bb;
-        --bg: #17121c;
-        --bg-soft: #241b2a;
-        --border: #332a38;
+        /* Noticeably lighter than --dark-bg (#170d1a) on purpose - the hero/
+           privacy/final-cta sections fade into --bg at their edges, and
+           that fade is invisible if the two colors are nearly identical. */
+        --bg: #251c2e;
+        --bg-soft: #2f2438;
+        --border: #3e3247;
         --shadow-sm: 0 2px 10px rgba(0, 0, 0, 0.35);
         --shadow-md: 0 10px 30px rgba(0, 0, 0, 0.45);
         --shadow-lg: 0 24px 60px rgba(0, 0, 0, 0.55);
@@ -237,6 +240,11 @@ img { max-width: 100%; }
     background-size: 3px 3px;
     pointer-events: none;
     z-index: -1;
+    /* Fades out over the same zone as the background-color blend below it -
+       otherwise the grain's own edge draws a hard line regardless of how
+       well the colors on either side blend. */
+    mask-image: linear-gradient(to bottom, black, black calc(100% - 240px), transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, black, black calc(100% - 240px), transparent 100%);
 }
 
 .hero-copy { position: relative; max-width: 46rem; }
