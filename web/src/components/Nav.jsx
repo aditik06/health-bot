@@ -1,21 +1,23 @@
 import { useEffect, useState } from 'react';
 
-// Overlays the dark hero transparently with light text, then swaps to a
-// frosted light bar with dark text once the hero has scrolled past - the
-// same trick Apple's product-page nav uses.
+// Overlays the dark hero transparently with light text at the very top,
+// then swaps to a frosted light bar with dark text almost as soon as
+// scrolling starts. The switch used to wait for the full hero height to
+// scroll past, but the hero's own content is vertically centered rather
+// than pinned to its bottom edge - so the tail of the hero (the CTA
+// buttons) would scroll up into the nav's band while the nav was still
+// transparent, showing hero content bleeding through behind the nav text.
+// A near-immediate switch closes that window entirely.
+const SCROLL_THRESHOLD = 24;
+
 export default function Nav({ loginHref, registerHref }) {
     const [scrolled, setScrolled] = useState(false);
 
     useEffect(() => {
-        const threshold = () => Math.max(window.innerHeight - 96, 240);
-        const onScroll = () => setScrolled(window.scrollY > threshold());
+        const onScroll = () => setScrolled(window.scrollY > SCROLL_THRESHOLD);
         onScroll();
         window.addEventListener('scroll', onScroll, { passive: true });
-        window.addEventListener('resize', onScroll);
-        return () => {
-            window.removeEventListener('scroll', onScroll);
-            window.removeEventListener('resize', onScroll);
-        };
+        return () => window.removeEventListener('scroll', onScroll);
     }, []);
 
     return (
