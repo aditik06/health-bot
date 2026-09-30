@@ -1,0 +1,118 @@
+/* PROTOTYPE ONLY - scroll-driven "fly through the body" mechanic test.
+   Reuses Bloom's fonts/palette so it reads as an extension of the brand,
+   not a different product. */
+
+@font-face {
+    font-family: 'Fraunces Display';
+    font-style: normal;
+    font-weight: 600;
+    font-display: swap;
+    src: url('./assets/fonts/fraunces-600.woff2') format('woff2');
+}
+@font-face {
+    font-family: 'Jakarta';
+    font-style: normal;
+    font-weight: 200 800;
+    font-display: swap;
+    src: url('./assets/fonts/jakarta-variable.woff2') format('woff2');
+}
+
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    background: #170d1a;
+    color: #fdf6fa;
+    font-family: 'Jakarta', -apple-system, sans-serif;
+}
+
+.storyboard-track {
+    /* Scroll distance for the whole journey - longer means a slower,
+       more deliberate fly-through; shorter feels snappier. */
+    height: 400vh;
+    position: relative;
+}
+
+.storyboard-stage {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow: hidden;
+    background: radial-gradient(ellipse 120% 90% at 50% 100%, #241629, #170d1a 65%);
+}
+
+.storyboard-glow {
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(500px 500px at 50% 55%, rgba(255, 79, 160, 0.35), transparent 65%),
+        radial-gradient(400px 400px at 50% 50%, rgba(201, 182, 242, 0.25), transparent 70%);
+    filter: blur(20px);
+    pointer-events: none;
+}
+
+/* Text always lives in a fixed top band; the character/illustration are
+   confined below it (see charY/bodyScale keyframes in Storyboard.jsx) so
+   the two never have to fight over the same screen space regardless of
+   where she is horizontally mid-flight. */
+.storyboard-beat {
+    position: absolute;
+    top: 10%;
+    left: 8%;
+    max-width: 22rem;
+    pointer-events: none;
+}
+
+.storyboard-beat-right {
+    left: auto;
+    right: 6%;
+    text-align: right;
+}
+
+.storyboard-eyebrow {
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #ff4fa0;
+    margin: 0 0 14px;
+}
+
+.storyboard-beat h1,
+.storyboard-beat h2 {
+    font-family: 'Fraunces Display', Georgia, serif;
+    font-weight: 600;
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    line-height: 1.12;
+    margin: 0 0 14px;
+}
+
+.storyboard-body {
+    font-size: 1.02rem;
+    line-height: 1.6;
+    color: rgba(253, 246, 250, 0.78);
+    margin: 0;
+}
+
+.storyboard-hint {
+    position: absolute;
+    bottom: 28px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.8rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(253, 246, 250, 0.5);
+}
+
+@media (max-width: 760px) {
+    .storyboard-beat,
+    .storyboard-beat-right {
+        left: 6%;
+        right: 6%;
+        max-width: none;
+        text-align: center;
+        top: 14%;
+        transform: none;
+    }
+}
