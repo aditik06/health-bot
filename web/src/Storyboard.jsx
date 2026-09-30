@@ -1,5 +1,5 @@
-import { useRef } from 'react';
-import { motion, useScroll, useTransform } from 'motion/react';
+import { useRef, useState } from 'react';
+import { AnimatePresence, motion, useMotionValueEvent, useScroll, useTransform } from 'motion/react';
 
 // ---------------------------------------------------------------------
 // PROTOTYPE ONLY. Proves out the scroll-driven "fly through the body"
@@ -174,9 +174,24 @@ export default function Storyboard() {
     const glowScale = useTransform(scrollYProgress, [0, 0.5, 1], [1, 1.6, 1.3]);
     const glowOpacity = useTransform(scrollYProgress, [0, 0.5, 1], [0.5, 0.9, 0.7]);
 
-    const beat1 = useTransform(scrollYProgress, [0, 0.12, 0.28], [1, 1, 0]);
-    const beat2 = useTransform(scrollYProgress, [0.28, 0.4, 0.55, 0.65], [0, 1, 1, 0]);
-    const beat3 = useTransform(scrollYProgress, [0.68, 0.8], [0, 1]);
+    // Only one beat's text is ever mounted at a time - not just faded to
+    // zero opacity. Two independently-interpolated opacity curves can
+    // desync by a frame or two under real scroll timing (this is exactly
+    // what caused the overlapping-text bug: both beats briefly visible at
+    // once), so React conditionally rendering a single element is the only
+    // way to actually guarantee no overlap, regardless of any Motion
+    // timing quirk.
+    const [activeBeat, setActiveBeat] = useState(0);
+    useMotionValueEvent(scrollYProgress, 'change', (p) => {
+        const next = p < 0.28 ? 0 : p < 0.68 ? 1 : 2;
+        setActiveBeat((prev) => (prev === next ? prev : next));
+    });
+
+    const beatVariants = {
+        initial: { opacity: 0, y: 12 },
+        animate: { opacity: 1, y: 0 },
+        exit: { opacity: 0, y: -12 }
+    };
 
     return (
         <div className="storyboard-track" ref={trackRef}>
@@ -187,23 +202,29 @@ export default function Storyboard() {
 
                 <Character style={{ position: 'absolute', left: charX, top: charY, x: '-50%', y: '-50%', scale: charScale, rotate: charRotate }} />
 
-                <motion.div className="storyboard-beat" style={{ opacity: beat1 }}>
-                    <p className="storyboard-eyebrow">{BEATS[0].eyebrow}</p>
-                    <h1>{BEATS[0].headline}</h1>
-                    <p className="storyboard-body">{BEATS[0].body}</p>
-                </motion.div>
-
-                <motion.div className="storyboard-beat storyboard-beat-right" style={{ opacity: beat2 }}>
-                    <p className="storyboard-eyebrow">{BEATS[1].eyebrow}</p>
-                    <h2>{BEATS[1].headline}</h2>
-                    <p className="storyboard-body">{BEATS[1].body}</p>
-                </motion.div>
-
-                <motion.div className="storyboard-beat storyboard-beat-right" style={{ opacity: beat3 }}>
-                    <p className="storyboard-eyebrow">{BEATS[2].eyebrow}</p>
-                    <h2>{BEATS[2].headline}</h2>
-                    <p className="storyboard-body">{BEATS[2].body}</p>
-                </motion.div>
+                <AnimatePresence mode="wait">
+                    {activeBeat === 0 && (
+                        <motion.div key="beat-0" className="storyboard-beat" variants={beatVariants} initial="initial" animate="animate" exit="exit" transition={{ duration: 0.3 }}>
+                            <p className="storyboard-eyebrow">{BEATS[0].eyebrow}</p>
+                            <h1>{BEATS[0].headline}</h1>
+                            <p className="storyboard-body">{BEATS[0].body}</p>
+                        </motion.div>
+                    )}
+                    {activeBeat === 1 && (
+                        <motion.div key="beat-1" className="storyboard-beat storyboard-beat-right" variants={beatVariants} initial="initial" animate="animate" exit="exit" transition={{ duration: 0.3 }}>
+                            <p className="storyboard-eyebrow">{BEATS[1].eyebrow}</p>
+                            <h2>{BEATS[1].headline}</h2>
+                            <p className="storyboard-body">{BEATS[1].body}</p>
+                        </motion.div>
+                    )}
+                    {activeBeat === 2 && (
+                        <motion.div key="beat-2" className="storyboard-beat storyboard-beat-right" variants={beatVariants} initial="initial" animate="animate" exit="exit" transition={{ duration: 0.3 }}>
+                            <p className="storyboard-eyebrow">{BEATS[2].eyebrow}</p>
+                            <h2>{BEATS[2].headline}</h2>
+                            <p className="storyboard-body">{BEATS[2].body}</p>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
 
                 <div className="storyboard-hint">Scroll to fly in</div>
             </div>
