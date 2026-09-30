@@ -205,7 +205,13 @@ img { max-width: 100%; }
     justify-content: center;
     text-align: center;
     padding: 120px 24px 80px;
-    background: var(--dark-bg);
+    /* Fades into the next section's color at the bottom edge instead of
+       cutting off flat - color-mix keeps the transparent end-stop tinted to
+       --bg rather than defaulting to transparent black, which is what
+       causes a muddy dark fringe halfway through a fade like this. */
+    background:
+        linear-gradient(to bottom, color-mix(in srgb, var(--bg) 0%, transparent), var(--bg)) bottom / 100% 240px no-repeat,
+        var(--dark-bg);
     color: #fff;
     overflow: hidden;
     isolation: isolate;
@@ -308,15 +314,18 @@ img { max-width: 100%; }
 }
 
 /* ---------- Story sections (one capability per screen) ---------- */
+/* No forced min-height here - a near-full-viewport box with short,
+   center-aligned content is exactly what makes a scroll reread as discrete
+   slides instead of one continuous page. Padding alone gives it presence;
+   height comes from the content. */
 .story {
-    min-height: 92vh;
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 64px;
     align-items: center;
     max-width: var(--maxw);
     margin: 0 auto;
-    padding: 90px 24px;
+    padding: 110px 24px;
 }
 
 .story-reverse { direction: rtl; }
@@ -507,14 +516,18 @@ img { max-width: 100%; }
 /* ---------- Privacy statement band ---------- */
 .privacy-band {
     position: relative;
-    min-height: 60vh;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     text-align: center;
     padding: 100px 24px;
-    background: var(--dark-bg);
+    /* Fades in from the story sections' color at the top edge - see the
+       matching note on .hero for why color-mix rather than plain
+       transparent. */
+    background:
+        linear-gradient(to bottom, var(--bg), color-mix(in srgb, var(--bg) 0%, transparent)) top / 100% 240px no-repeat,
+        var(--dark-bg);
     color: #fff;
     overflow: hidden;
     isolation: isolate;
@@ -534,9 +547,16 @@ img { max-width: 100%; }
 
 /* ---------- Final CTA ---------- */
 .final-cta {
+    position: relative;
     padding: 120px 24px;
     text-align: center;
-    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    /* Top edge fades in from the privacy band's plum, bottom edge fades out
+       to the footer's background - the diagonal brand gradient still shows
+       through everywhere in between. */
+    background:
+        linear-gradient(to bottom, var(--dark-bg), color-mix(in srgb, var(--dark-bg) 0%, transparent)) top / 100% 200px no-repeat,
+        linear-gradient(to top, var(--bg), color-mix(in srgb, var(--bg) 0%, transparent)) bottom / 100% 200px no-repeat,
+        linear-gradient(135deg, var(--primary), var(--secondary));
     color: #fff;
 }
 
@@ -591,7 +611,6 @@ img { max-width: 100%; }
         gap: 40px;
         text-align: center;
         padding: 70px 24px;
-        min-height: 0;
     }
 
     .story-reverse { direction: ltr; }
