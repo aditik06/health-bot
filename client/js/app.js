@@ -800,7 +800,7 @@ function loadPrescribedDietSection() {
 
     if (state.prescriptions.length > 0) {
         parts.push('<p><strong>📄 Uploaded prescriptions:</strong></p><ul>' +
-            state.prescriptions.map(p => `<li><a href="${p.url}" target="_blank" rel="noopener">${escapeHtml(p.filename)}</a></li>`).join('') +
+            state.prescriptions.map(p => `<li><a href="#" onclick="viewPrescription(${p.id}); return false;">${escapeHtml(p.filename)}</a></li>`).join('') +
             '</ul>');
     }
 

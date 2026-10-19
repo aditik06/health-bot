@@ -105,7 +105,7 @@ function loadPrescriptions() {
         <div class="prescription-item">
             <div>
                 ${(p.mimeType || '').includes('image') ?
-                    `<img src="${p.url}" alt="Prescription">` :
+                    `<img data-prescription-id="${p.id}" alt="Prescription">` :
                     '<span>📄 PDF Document</span>'}
                 <strong>${escapeHtml(p.filename)}</strong>
                 <small>${new Date(p.uploadedAt).toLocaleDateString()}</small>
@@ -116,18 +116,61 @@ function loadPrescriptions() {
             </div>
         </div>
     `).join('');
+
+    preview.querySelectorAll('img[data-prescription-id]').forEach(img => {
+        const prescription = state.prescriptions.find(p => p.id === Number(img.dataset.prescriptionId));
+        if (!prescription) return;
+        fetchPrescriptionBlobUrl(prescription)
+            .then(url => { img.src = url; })
+            .catch(() => {
+                const fallback = document.createElement('span');
+                fallback.textContent = '🖼️ Preview unavailable';
+                img.replaceWith(fallback);
+            });
+    });
 }
 
-function viewPrescription(id) {
+// Prescription files sit behind Bearer-token auth, which neither <img src>
+// nor window.open can send - both used to hit a 401. Fetch with the header
+// and give the browser a blob URL instead.
+const prescriptionBlobUrls = new Map();
+
+async function fetchPrescriptionBlobUrl(prescription) {
+    if (prescriptionBlobUrls.has(prescription.id)) return prescriptionBlobUrls.get(prescription.id);
+
+    const response = await fetch(prescription.url, { headers: { Authorization: `Bearer ${getToken()}` } });
+    if (!response.ok) throw new Error('Could not load the file');
+
+    const url = URL.createObjectURL(await response.blob());
+    prescriptionBlobUrls.set(prescription.id, url);
+    return url;
+}
+
+async function viewPrescription(id) {
     const prescription = state.prescriptions.find(p => p.id === id);
     if (!prescription) return;
-    window.open(prescription.url, '_blank');
+
+    // Open the tab synchronously inside the click so popup blockers allow it,
+    // then point it at the file once it has downloaded.
+    const tab = window.open('', '_blank');
+    try {
+        const url = await fetchPrescriptionBlobUrl(prescription);
+        if (tab) tab.location.href = url;
+        else window.open(url, '_blank');
+    } catch (err) {
+        if (tab) tab.close();
+        showNotification(err.message || 'Could not open prescription');
+    }
 }
 
 async function deletePrescription(id) {
     if (!confirm('Delete this prescription?')) return;
     try {
         await api.delete(`/prescriptions/${id}`);
+        if (prescriptionBlobUrls.has(id)) {
+            URL.revokeObjectURL(prescriptionBlobUrls.get(id));
+            prescriptionBlobUrls.delete(id);
+        }
         state.prescriptions = state.prescriptions.filter(p => p.id !== id);
         loadPrescriptions();
         loadPrescribedDietSection();
