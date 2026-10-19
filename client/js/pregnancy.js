@@ -302,7 +302,7 @@ function setupWeightForm() {
         e.preventDefault();
 
         const weight = parseFloat(document.getElementById('weightValue').value);
-        const date = new Date().toISOString().split('T')[0];
+        const date = localDateString(new Date());
 
         try {
             const created = await api.post('/weight', { date, weight });
@@ -346,7 +346,7 @@ function updateWeightChart() {
     window.weightChartInstance = new Chart(ctx, {
         type: 'line',
         data: {
-            labels: weights.map(w => new Date(w.date).toLocaleDateString()),
+            labels: weights.map(w => parseLocalDate(w.date).toLocaleDateString()),
             datasets: [{
                 label: 'Weight (kg)',
                 data: weights.map(w => w.weight),

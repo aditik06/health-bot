@@ -7,7 +7,7 @@ const router = express.Router();
 router.use(authRequired);
 
 router.get('/', (req, res) => {
-  const rows = db.prepare('SELECT * FROM diary_entries WHERE user_id = ? ORDER BY date DESC').all(req.userId);
+  const rows = db.prepare('SELECT * FROM diary_entries WHERE user_id = ? ORDER BY substr(date, 1, 10) DESC, created_at DESC, id DESC').all(req.userId);
   res.json(rows.map(diaryToJson));
 });
 

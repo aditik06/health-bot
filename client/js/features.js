@@ -318,7 +318,7 @@ function setupDiary() {
             content: document.getElementById('diaryContent').value,
             symptoms,
             tags: document.getElementById('diaryTags').value.split(',').map(t => t.trim()).filter(t => t),
-            date: new Date().toISOString()
+            date: localDateString(new Date())
         };
 
         try {
@@ -363,7 +363,7 @@ function loadDiaryEntries(entries) {
             ${entry.title ? `<h4>${escapeHtml(entry.title)}</h4>` : ''}
             <div class="diary-date">
                 <span class="mood-emoji">${MOOD_EMOJIS[entry.mood] || ''}</span>
-                <span>${new Date(entry.date).toLocaleString()}</span>
+                <span>${new Date(entry.createdAt || entry.date).toLocaleString()}</span>
                 <span>⚡ Energy: ${escapeHtml(entry.energy || '-')}/10</span>
             </div>
             <p>${escapeHtml(entry.content || '')}</p>

@@ -374,14 +374,27 @@ function loadPregnancyInsights() {
     document.getElementById('todayInsights').innerHTML = `<p>${insights[trimester]}</p>`;
 }
 
+// An appointment's moment in the user's local time. Two traps avoided here:
+// new Date('YYYY-MM-DD') is UTC midnight (the wrong day for anyone west of
+// UTC, and already "past" by mid-morning for anyone east of it), and the
+// time matters - a 4pm appointment today isn't past at 10am.
+function appointmentDateTime(apt) {
+    const when = new Date(parseLocalDate(apt.date));
+    const [hours, minutes] = String(apt.time || '').split(':').map(Number);
+    if (Number.isFinite(hours)) when.setHours(hours, Number.isFinite(minutes) ? minutes : 0, 0, 0);
+    else when.setHours(23, 59, 0, 0); // no time given: good until the end of that day
+    return when;
+}
+
 function loadNextAppointment() {
+    const now = new Date();
     const upcoming = state.appointments
-        .filter(apt => new Date(apt.date) >= new Date())
-        .sort((a, b) => new Date(a.date) - new Date(b.date));
+        .filter(apt => appointmentDateTime(apt) >= now)
+        .sort((a, b) => appointmentDateTime(a) - appointmentDateTime(b));
 
     if (upcoming.length > 0) {
         const next = upcoming[0];
-        const date = new Date(next.date);
+        const date = appointmentDateTime(next);
         document.getElementById('nextAppt').textContent = date.toLocaleDateString('en-US', {
             month: 'short',
             day: 'numeric'
@@ -504,7 +517,7 @@ function updateCycleLengthChart() {
     const hasHistory = sorted.length >= 2;
 
     const labels = hasHistory
-        ? sorted.slice(1).map(c => new Date(c.startDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }))
+        ? sorted.slice(1).map(c => parseLocalDate(c.startDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }))
         : ['Configured length'];
     const data = hasHistory
         ? sorted.slice(1).map(c => c.length)
@@ -553,10 +566,12 @@ async function addCyclePrediction() {
 
 // Lets the user log an actual period start, building real history for prediction
 async function logPeriodStart() {
-    const dateStr = new Date().toISOString().split('T')[0];
+    // Local calendar day (toISOString is UTC: late evening in the Americas
+    // would file this under tomorrow) and DST-safe day arithmetic.
+    const dateStr = localDateString(new Date());
     const previousStart = getMostRecentCycleStart();
     const length = previousStart
-        ? Math.round((new Date(dateStr) - new Date(previousStart)) / (1000 * 60 * 60 * 24))
+        ? daysBetween(parseLocalDate(previousStart), parseLocalDate(dateStr))
         : null;
 
     try {
@@ -597,8 +612,7 @@ function setupAppointments() {
 
     setupSpeechToText('appointmentNotesMicBtn', 'appointmentNotes');
 
-    const today = new Date().toISOString().split('T')[0];
-    document.getElementById('appointmentDate').min = today;
+    document.getElementById('appointmentDate').min = localDateString(new Date());
 
     appointmentForm.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -637,11 +651,11 @@ function loadAppointments() {
         return;
     }
 
-    const sorted = [...state.appointments].sort((a, b) => new Date(a.date) - new Date(b.date));
+    const sorted = [...state.appointments].sort((a, b) => appointmentDateTime(a) - appointmentDateTime(b));
 
     appointmentList.innerHTML = sorted.map(apt => {
-        const date = new Date(apt.date);
-        const isPast = date < new Date();
+        const date = parseLocalDate(apt.date);
+        const isPast = appointmentDateTime(apt) < new Date();
 
         return `
             <div class="appointment-item" style="${isPast ? 'opacity: 0.6;' : ''}">
@@ -1137,6 +1151,14 @@ function localDateString(date) {
     return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
 }
 
+// The calendar day an entry belongs to, in local time. Older entries hold a
+// full UTC timestamp, newer ones a plain date.
+function diaryEntryLocalDate(entry) {
+    return /^\d{4}-\d{2}-\d{2}$/.test(entry.date)
+        ? entry.date
+        : localDateString(new Date(entry.date));
+}
+
 function checkReminders() {
     const prefs = getReminderPrefs();
     const reminders = [];
@@ -1181,7 +1203,7 @@ function checkReminders() {
 
     if (prefs.daily && now.getHours() >= DAILY_CHECKIN_HOUR) {
         const today = localDateString(now);
-        const loggedToday = state.diaryEntries.some(entry => entry.date === today);
+        const loggedToday = state.diaryEntries.some(entry => diaryEntryLocalDate(entry) === today);
         if (!loggedToday) {
             reminders.push({
                 key: `daily-${now.toDateString()}`,
