@@ -96,7 +96,7 @@ Then edit `server/.env`:
 ANTHROPIC_API_KEY=your-key-here
 ```
 
-Get a key at [console.anthropic.com](https://console.anthropic.com/). Without it, the rest of the app works normally — the chat tab just shows a message explaining it isn't configured.
+Get a key at [console.anthropic.com](https://console.anthropic.com/). Without it, the rest of the app works normally — the companion tells users it isn't available right now, and the server logs a one-line warning at startup explaining how to enable it.
 
 ## Deployment
 

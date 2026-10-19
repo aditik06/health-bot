@@ -9,6 +9,12 @@ router.use(authRequired);
 
 const client = ANTHROPIC_API_KEY ? new Anthropic({ apiKey: ANTHROPIC_API_KEY }) : null;
 
+// Setup instructions belong in the operator's logs, not in a chat bubble
+// shown to the people using the app.
+if (!client) {
+  console.warn('AI companion disabled: set ANTHROPIC_API_KEY in server/.env (see server/.env.example) to enable it.');
+}
+
 const HISTORY_LIMIT = 20; // how many prior turns to send back as context
 
 function buildSystemPrompt(user) {
@@ -45,7 +51,7 @@ router.get('/', (req, res) => {
 
 router.post('/', async (req, res) => {
   if (!client) {
-    return res.status(503).json({ error: 'AI chat is not configured. Set ANTHROPIC_API_KEY on the server (see server/.env.example).' });
+    return res.status(503).json({ error: "Your companion isn't available right now. Please try again later." });
   }
 
   const { message } = req.body;
