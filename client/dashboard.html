@@ -865,7 +865,7 @@
                         <button class="btn-primary" onclick="exportAllData()">📥 Export All Data</button>
                         <button class="btn-primary" onclick="document.getElementById('importFile').click()">📤 Import Data</button>
                         <input type="file" id="importFile" accept=".json" hidden onchange="importData(event)">
-                        <button class="btn-secondary" onclick="clearAllData()" style="background: #e74c3c; color: white;">
+                        <button class="btn-secondary" onclick="clearAllData()" style="background: var(--danger-color); border-color: var(--danger-color); color: white;">
                             🗑️ Clear All Data
                         </button>
                     </div>

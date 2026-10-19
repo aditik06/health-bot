@@ -517,8 +517,8 @@ function updateCycleLengthChart() {
             datasets: [{
                 label: 'Cycle Length (days)',
                 data,
-                borderColor: '#ff6b9d',
-                backgroundColor: 'rgba(255, 107, 157, 0.1)',
+                borderColor: '#ff4fa0',
+                backgroundColor: 'rgba(255, 79, 160, 0.12)',
                 tension: 0.4,
                 fill: true
             }]
@@ -650,7 +650,7 @@ function loadAppointments() {
                     <p>📅 ${date.toLocaleDateString()} at ${escapeHtml(apt.time)}</p>
                     ${apt.doctor ? `<p>👨‍⚕️ ${escapeHtml(apt.doctor)}</p>` : ''}
                     ${apt.notes ? `<p>📝 ${escapeHtml(apt.notes)}</p>` : ''}
-                    ${isPast ? '<span style="color: #7f8c8d;">✓ Past</span>' : '<span style="color: #27ae60;">⏰ Upcoming</span>'}
+                    ${isPast ? '<span style="color: var(--text-light);">✓ Past</span>' : '<span style="color: var(--success-color);">⏰ Upcoming</span>'}
                 </div>
                 <button class="delete-btn" onclick="deleteAppointment(${apt.id})">Delete</button>
             </div>

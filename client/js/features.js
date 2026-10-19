@@ -36,17 +36,17 @@ function setupMedicationTracker() {
 
     uploadArea.addEventListener('dragover', (e) => {
         e.preventDefault();
-        uploadArea.style.borderColor = '#ff5287';
+        uploadArea.classList.add('drag-over');
     });
 
     uploadArea.addEventListener('dragleave', (e) => {
         e.preventDefault();
-        uploadArea.style.borderColor = '#ff6b9d';
+        uploadArea.classList.remove('drag-over');
     });
 
     uploadArea.addEventListener('drop', (e) => {
         e.preventDefault();
-        uploadArea.style.borderColor = '#ff6b9d';
+        uploadArea.classList.remove('drag-over');
         const files = e.dataTransfer.files;
         if (files.length > 0) {
             handlePrescriptionUpload({ target: { files: files } });
@@ -261,7 +261,7 @@ function updateTodaysMedications() {
             <div class="list-row-card">
                 <div>
                     <strong>${escapeHtml(med.name)}</strong>
-                    <small style="display: block; color: #7f8c8d;">${escapeHtml(med.time || '-')}</small>
+                    <small style="display: block; color: var(--text-light);">${escapeHtml(med.time || '-')}</small>
                 </div>
                 <span style="font-size: 1.5rem;">${taken ? '✅' : '⏰'}</span>
             </div>
@@ -296,7 +296,7 @@ function setupDiary() {
     diaryContent.addEventListener('input', (e) => {
         const count = e.target.value.length;
         charCount.textContent = count;
-        charCount.style.color = count > 1000 ? '#e74c3c' : '#7f8c8d';
+        charCount.style.color = count > 1000 ? 'var(--danger-color)' : 'var(--text-light)';
     });
 
     diaryForm.addEventListener('submit', async (e) => {
@@ -435,8 +435,8 @@ function updateWeeklyMoodChart() {
             datasets: [{
                 label: 'Mood',
                 data: lastWeek.map(e => moodValues[e.mood] || 3),
-                borderColor: '#ff6b9d',
-                backgroundColor: 'rgba(255, 107, 157, 0.1)',
+                borderColor: '#ff4fa0',
+                backgroundColor: 'rgba(255, 79, 160, 0.12)',
                 tension: 0.4,
                 fill: true
             }]
@@ -608,7 +608,7 @@ function updateKickChart() {
             datasets: [{
                 label: 'Kicks per Day',
                 data: dates.map(d => byDate[d]),
-                backgroundColor: '#ff6b9d'
+                backgroundColor: '#ff4fa0'
             }]
         },
         options: {

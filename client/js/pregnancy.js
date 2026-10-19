@@ -350,8 +350,8 @@ function updateWeightChart() {
             datasets: [{
                 label: 'Weight (kg)',
                 data: weights.map(w => w.weight),
-                borderColor: '#ff6b9d',
-                backgroundColor: 'rgba(255, 107, 157, 0.1)',
+                borderColor: '#ff4fa0',
+                backgroundColor: 'rgba(255, 79, 160, 0.12)',
                 tension: 0.4,
                 fill: true
             }]

@@ -1304,6 +1304,17 @@ body.dark-mode .menu-item.active svg {
     transition: border-color 0.3s;
 }
 
+.upload-area:hover,
+.upload-area.drag-over {
+    border-color: var(--primary-color-dark);
+    background: color-mix(in srgb, var(--primary-color) 7%, transparent);
+}
+
+.upload-area:focus-visible {
+    outline: 3px solid var(--accent-color);
+    outline-offset: 2px;
+}
+
 .upload-icon {
     font-size: 2.5rem;
     display: block;
