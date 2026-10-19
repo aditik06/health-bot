@@ -1,3 +1,16 @@
+// ========== HTML ESCAPING ==========
+// Anything the user typed (medication names, diary text, contacts, uploaded
+// filenames) must go through this before being interpolated into innerHTML,
+// otherwise it runs as markup. Safe for both text and quoted attribute values.
+function escapeHtml(value) {
+    return String(value ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
 // ========== API CLIENT ==========
 const API_BASE = '/api';
 

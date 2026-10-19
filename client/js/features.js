@@ -107,7 +107,7 @@ function loadPrescriptions() {
                 ${(p.mimeType || '').includes('image') ?
                     `<img src="${p.url}" alt="Prescription">` :
                     '<span>📄 PDF Document</span>'}
-                <strong>${p.filename}</strong>
+                <strong>${escapeHtml(p.filename)}</strong>
                 <small>${new Date(p.uploadedAt).toLocaleDateString()}</small>
             </div>
             <div>
@@ -148,12 +148,12 @@ function loadMedications() {
     medList.innerHTML = activeMeds.map(med => `
         <div class="medication-item">
             <div class="med-info">
-                <h4>💊 ${med.name}</h4>
-                <p><strong>Dosage:</strong> ${med.dosage || '-'}</p>
-                <p><strong>Frequency:</strong> ${med.frequency || '-'}</p>
-                ${med.purpose ? `<p><strong>Purpose:</strong> ${med.purpose}</p>` : ''}
-                <span class="med-time">⏰ ${med.time || '-'}</span>
-                ${med.notes ? `<p style="margin-top: 8px; font-size: 0.9rem;">📝 ${med.notes}</p>` : ''}
+                <h4>💊 ${escapeHtml(med.name)}</h4>
+                <p><strong>Dosage:</strong> ${escapeHtml(med.dosage || '-')}</p>
+                <p><strong>Frequency:</strong> ${escapeHtml(med.frequency || '-')}</p>
+                ${med.purpose ? `<p><strong>Purpose:</strong> ${escapeHtml(med.purpose)}</p>` : ''}
+                <span class="med-time">⏰ ${escapeHtml(med.time || '-')}</span>
+                ${med.notes ? `<p style="margin-top: 8px; font-size: 0.9rem;">📝 ${escapeHtml(med.notes)}</p>` : ''}
             </div>
             <div class="med-actions">
                 <button class="btn-taken" onclick="markMedicationTaken(${med.id})">✓ Taken</button>
@@ -207,8 +207,8 @@ function updateTodaysMedications() {
         return `
             <div class="list-row-card">
                 <div>
-                    <strong>${med.name}</strong>
-                    <small style="display: block; color: #7f8c8d;">${med.time || '-'}</small>
+                    <strong>${escapeHtml(med.name)}</strong>
+                    <small style="display: block; color: #7f8c8d;">${escapeHtml(med.time || '-')}</small>
                 </div>
                 <span style="font-size: 1.5rem;">${taken ? '✅' : '⏰'}</span>
             </div>
@@ -307,21 +307,21 @@ function loadDiaryEntries(entries) {
 
     diaryList.innerHTML = list.map(entry => `
         <div class="diary-entry">
-            ${entry.title ? `<h4>${entry.title}</h4>` : ''}
+            ${entry.title ? `<h4>${escapeHtml(entry.title)}</h4>` : ''}
             <div class="diary-date">
                 <span class="mood-emoji">${MOOD_EMOJIS[entry.mood] || ''}</span>
                 <span>${new Date(entry.date).toLocaleString()}</span>
-                <span>⚡ Energy: ${entry.energy || '-'}/10</span>
+                <span>⚡ Energy: ${escapeHtml(entry.energy || '-')}/10</span>
             </div>
-            <p>${entry.content || ''}</p>
+            <p>${escapeHtml(entry.content || '')}</p>
             ${entry.symptoms && entry.symptoms.length > 0 ? `
                 <div style="margin-top: 10px;">
-                    <strong>Symptoms:</strong> ${entry.symptoms.join(', ')}
+                    <strong>Symptoms:</strong> ${escapeHtml(entry.symptoms.join(', '))}
                 </div>
             ` : ''}
             ${entry.tags && entry.tags.length > 0 ? `
                 <div class="diary-tags">
-                    ${entry.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                    ${entry.tags.map(tag => `<span class="tag">${escapeHtml(tag)}</span>`).join('')}
                 </div>
             ` : ''}
             <button class="delete-btn" onclick="deleteDiaryEntry(${entry.id})" style="margin-top: 15px;">Delete</button>
@@ -516,7 +516,7 @@ function updateKickHistory() {
     } else {
         historyDiv.innerHTML = recentSessions.map(session => `
             <div class="history-card">
-                <strong>${session.date}</strong><br>
+                <strong>${escapeHtml(session.date)}</strong><br>
                 Total kicks: ${session.count}<br>
                 Started: ${new Date(session.startedAt).toLocaleTimeString()}
             </div>

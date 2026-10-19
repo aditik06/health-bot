@@ -148,13 +148,13 @@ function showAuthNotice(type, message, { showResend = false, email = '' } = {}) 
     if (!notice) return;
 
     notice.className = `auth-notice auth-notice-${type}`;
-    notice.innerHTML = `<p>${message}</p>`;
+    notice.innerHTML = `<p>${escapeHtml(message)}</p>`;
 
     if (showResend) {
         const wrap = document.createElement('div');
         wrap.className = 'auth-notice-resend';
         wrap.innerHTML = `
-            <input type="email" placeholder="Your email" value="${email.replace(/"/g, '&quot;')}" />
+            <input type="email" placeholder="Your email" value="${escapeHtml(email)}" />
             <button type="button">Resend verification email</button>
         `;
         const input = wrap.querySelector('input');
@@ -634,10 +634,10 @@ function loadAppointments() {
         return `
             <div class="appointment-item" style="${isPast ? 'opacity: 0.6;' : ''}">
                 <div class="appointment-info">
-                    <h4>${apt.type}</h4>
-                    <p>📅 ${date.toLocaleDateString()} at ${apt.time}</p>
-                    ${apt.doctor ? `<p>👨‍⚕️ ${apt.doctor}</p>` : ''}
-                    ${apt.notes ? `<p>📝 ${apt.notes}</p>` : ''}
+                    <h4>${escapeHtml(apt.type)}</h4>
+                    <p>📅 ${date.toLocaleDateString()} at ${escapeHtml(apt.time)}</p>
+                    ${apt.doctor ? `<p>👨‍⚕️ ${escapeHtml(apt.doctor)}</p>` : ''}
+                    ${apt.notes ? `<p>📝 ${escapeHtml(apt.notes)}</p>` : ''}
                     ${isPast ? '<span style="color: #7f8c8d;">✓ Past</span>' : '<span style="color: #27ae60;">⏰ Upcoming</span>'}
                 </div>
                 <button class="delete-btn" onclick="deleteAppointment(${apt.id})">Delete</button>
@@ -661,15 +661,15 @@ async function deleteAppointment(id) {
 // ========== EMERGENCY CONTACTS ==========
 function loadEmergencyContacts() {
     const doctorInfo = currentUser.doctorName && currentUser.doctorPhone
-        ? `<strong>${currentUser.doctorName}</strong><br>📞 <a href="tel:${currentUser.doctorPhone}">${currentUser.doctorPhone}</a>`
+        ? `<strong>${escapeHtml(currentUser.doctorName)}</strong><br>📞 <a href="tel:${escapeHtml(currentUser.doctorPhone)}">${escapeHtml(currentUser.doctorPhone)}</a>`
         : '<p class="info-text">Not set</p>';
 
     const hospitalInfo = currentUser.hospitalName && currentUser.hospitalPhone
-        ? `<strong>${currentUser.hospitalName}</strong><br>📞 <a href="tel:${currentUser.hospitalPhone}">${currentUser.hospitalPhone}</a>`
+        ? `<strong>${escapeHtml(currentUser.hospitalName)}</strong><br>📞 <a href="tel:${escapeHtml(currentUser.hospitalPhone)}">${escapeHtml(currentUser.hospitalPhone)}</a>`
         : '<p class="info-text">Not set</p>';
 
     const emergencyInfo = currentUser.emergencyContact && currentUser.emergencyPhone
-        ? `<strong>${currentUser.emergencyContact}</strong><br>📞 <a href="tel:${currentUser.emergencyPhone}">${currentUser.emergencyPhone}</a>`
+        ? `<strong>${escapeHtml(currentUser.emergencyContact)}</strong><br>📞 <a href="tel:${escapeHtml(currentUser.emergencyPhone)}">${escapeHtml(currentUser.emergencyPhone)}</a>`
         : '<p class="info-text">Not set</p>';
 
     document.getElementById('doctorInfo').innerHTML = doctorInfo;
@@ -705,27 +705,27 @@ function editContacts() {
     const fieldsHtml = `
         <div class="form-group">
             <label for="fmDoctorName">Doctor Name</label>
-            <input type="text" id="fmDoctorName" value="${currentUser.doctorName || ''}">
+            <input type="text" id="fmDoctorName" value="${escapeHtml(currentUser.doctorName || '')}">
         </div>
         <div class="form-group">
             <label for="fmDoctorPhone">Doctor Phone</label>
-            <input type="tel" id="fmDoctorPhone" value="${currentUser.doctorPhone || ''}">
+            <input type="tel" id="fmDoctorPhone" value="${escapeHtml(currentUser.doctorPhone || '')}">
         </div>
         <div class="form-group">
             <label for="fmHospitalName">Hospital/Clinic Name</label>
-            <input type="text" id="fmHospitalName" value="${currentUser.hospitalName || ''}">
+            <input type="text" id="fmHospitalName" value="${escapeHtml(currentUser.hospitalName || '')}">
         </div>
         <div class="form-group">
             <label for="fmHospitalPhone">Hospital Phone</label>
-            <input type="tel" id="fmHospitalPhone" value="${currentUser.hospitalPhone || ''}">
+            <input type="tel" id="fmHospitalPhone" value="${escapeHtml(currentUser.hospitalPhone || '')}">
         </div>
         <div class="form-group">
             <label for="fmEmergencyContact">Emergency Contact Name</label>
-            <input type="text" id="fmEmergencyContact" value="${currentUser.emergencyContact || ''}">
+            <input type="text" id="fmEmergencyContact" value="${escapeHtml(currentUser.emergencyContact || '')}">
         </div>
         <div class="form-group">
             <label for="fmEmergencyPhone">Emergency Contact Phone</label>
-            <input type="tel" id="fmEmergencyPhone" value="${currentUser.emergencyPhone || ''}">
+            <input type="tel" id="fmEmergencyPhone" value="${escapeHtml(currentUser.emergencyPhone || '')}">
         </div>
     `;
 
@@ -800,12 +800,12 @@ function loadPrescribedDietSection() {
 
     if (state.prescriptions.length > 0) {
         parts.push('<p><strong>📄 Uploaded prescriptions:</strong></p><ul>' +
-            state.prescriptions.map(p => `<li><a href="${p.url}" target="_blank" rel="noopener">${p.filename}</a></li>`).join('') +
+            state.prescriptions.map(p => `<li><a href="${p.url}" target="_blank" rel="noopener">${escapeHtml(p.filename)}</a></li>`).join('') +
             '</ul>');
     }
 
     if (currentUser.dietaryNotes) {
-        parts.push(`<p><strong>📝 Notes from your doctor:</strong> ${currentUser.dietaryNotes}</p>`);
+        parts.push(`<p><strong>📝 Notes from your doctor:</strong> ${escapeHtml(currentUser.dietaryNotes)}</p>`);
     }
 
     if (parts.length === 0) {
@@ -976,11 +976,11 @@ function editProfile() {
     const fieldsHtml = `
         <div class="form-group">
             <label for="fmName">Full Name</label>
-            <input type="text" id="fmName" value="${currentUser.name || ''}" required>
+            <input type="text" id="fmName" value="${escapeHtml(currentUser.name || '')}" required>
         </div>
         <div class="form-group">
             <label for="fmAge">Age</label>
-            <input type="number" id="fmAge" min="18" max="60" value="${currentUser.age || ''}">
+            <input type="number" id="fmAge" min="18" max="60" value="${escapeHtml(currentUser.age || '')}">
         </div>
     `;
 
@@ -1007,7 +1007,7 @@ function updatePregnancyStatus() {
         </div>
         <div class="form-group" id="fmPregnancyDateGroup" style="${currentUser.pregnancyStatus === 'pregnant' ? '' : 'display:none;'}">
             <label for="fmPregnancyStartDate">Pregnancy Start Date (First day of last period)</label>
-            <input type="date" id="fmPregnancyStartDate" value="${currentUser.pregnancyStartDate || ''}">
+            <input type="date" id="fmPregnancyStartDate" value="${escapeHtml(currentUser.pregnancyStartDate || '')}">
         </div>
     `;
 
@@ -1194,7 +1194,7 @@ function showReminders() {
         reminderList.innerHTML = reminders.map(r => `
             <div style="padding: 15px; background: var(--bg-light); border-radius: 10px; margin-bottom: 10px;">
                 <span style="font-size: 2rem; margin-right: 10px;">${r.icon}</span>
-                <strong>${r.message}</strong>
+                <strong>${escapeHtml(r.message)}</strong>
             </div>
         `).join('');
     }
