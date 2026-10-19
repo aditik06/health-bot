@@ -18,8 +18,18 @@ function setupMedicationTracker() {
 
     setupSpeechToText('medNotesMicBtn', 'medNotes');
 
+    // A clickable <div> isn't reachable or operable by keyboard on its own.
+    uploadArea.setAttribute('role', 'button');
+    uploadArea.tabIndex = 0;
+    uploadArea.setAttribute('aria-label', 'Upload a prescription photo or PDF');
     uploadArea.addEventListener('click', () => {
         prescriptionFile.click();
+    });
+    uploadArea.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            prescriptionFile.click();
+        }
     });
 
     prescriptionFile.addEventListener('change', handlePrescriptionUpload);

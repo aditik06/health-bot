@@ -264,8 +264,18 @@ function setupNavigation() {
     const menuItems = document.querySelectorAll('.menu-item');
 
     menuItems.forEach(item => {
-        item.addEventListener('click', () => {
-            navigateTo(item.getAttribute('data-section'));
+        const goToSection = () => navigateTo(item.getAttribute('data-section'));
+
+        // These are <li>s, which a keyboard can't reach or activate on its
+        // own - make them behave like the buttons they are.
+        item.setAttribute('role', 'button');
+        item.tabIndex = 0;
+        item.addEventListener('click', goToSection);
+        item.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault(); // stop Space scrolling the page
+                goToSection();
+            }
         });
     });
 }
@@ -275,6 +285,8 @@ function navigateTo(sectionId) {
     document.querySelectorAll('.menu-item').forEach(mi => {
         const isActive = mi.getAttribute('data-section') === sectionId;
         mi.classList.toggle('active', isActive);
+        if (isActive) mi.setAttribute('aria-current', 'page');
+        else mi.removeAttribute('aria-current');
         // On narrow screens the menu is a horizontal scroller; keep the
         // current item in view (inline only, so the page itself doesn't jump).
         if (isActive) mi.scrollIntoView({ inline: 'center', block: 'nearest' });
