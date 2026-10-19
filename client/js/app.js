@@ -219,8 +219,9 @@ async function initDashboard() {
     // Update dashboard widgets
     updateTodaysMedications();
     checkReminders();
-
-    requestNotificationPermission();
+    // Notification permission is requested when the user switches a reminder
+    // on in Settings (a real gesture), not unprompted on page load - browsers
+    // increasingly ignore or penalise the latter.
 }
 
 async function loadAllData() {
@@ -877,7 +878,55 @@ function loadSupportGroups() {
 }
 
 // ========== SETTINGS ==========
+const REMINDER_TOGGLES = {
+    medicationReminders: 'medication',
+    appointmentReminders: 'appointment',
+    dailyReminders: 'daily'
+};
+
+// Reminder preferences live in this browser (they also gate this browser's
+// native notifications, which are per-device anyway), keyed by user so two
+// accounts sharing a machine don't share settings.
+function reminderPrefsKey() {
+    return `bloom.reminderPrefs.${currentUser ? currentUser.id : 'anon'}`;
+}
+
+function getReminderPrefs() {
+    const defaults = { medication: true, appointment: true, daily: true };
+    try {
+        return { ...defaults, ...JSON.parse(localStorage.getItem(reminderPrefsKey()) || '{}') };
+    } catch (err) {
+        return defaults;
+    }
+}
+
+function saveReminderPrefs(prefs) {
+    try {
+        localStorage.setItem(reminderPrefsKey(), JSON.stringify(prefs));
+    } catch (err) {
+        // storage blocked/full - the toggle still works for this session
+    }
+}
+
+function setupReminderSettings() {
+    const prefs = getReminderPrefs();
+    Object.entries(REMINDER_TOGGLES).forEach(([elementId, prefKey]) => {
+        const toggle = document.getElementById(elementId);
+        if (!toggle) return;
+        toggle.checked = prefs[prefKey];
+        toggle.addEventListener('change', () => {
+            const next = getReminderPrefs();
+            next[prefKey] = toggle.checked;
+            saveReminderPrefs(next);
+            if (toggle.checked) requestNotificationPermission();
+            checkReminders();
+        });
+    });
+}
+
 function setupSettings() {
+    setupReminderSettings();
+
     const darkModeToggle = document.getElementById('darkModeToggle');
     darkModeToggle.checked = !!currentUser.darkMode;
 
@@ -1051,39 +1100,74 @@ function requestNotificationPermission() {
     }
 }
 
+const REMINDER_BODIES = {
+    medication: 'Medication reminder',
+    appointment: 'Appointment reminder',
+    daily: 'Daily check-in'
+};
+
+// "Daily check-in" nudges once it's evening and nothing's been logged today.
+const DAILY_CHECKIN_HOUR = 18;
+
+function localDateString(date) {
+    const pad = n => String(n).padStart(2, '0');
+    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+}
+
 function checkReminders() {
+    const prefs = getReminderPrefs();
     const reminders = [];
     const now = new Date();
     const currentTime = now.getHours() * 60 + now.getMinutes();
 
-    state.medications.filter(m => m.active && m.reminder && m.time).forEach(med => {
-        const [hours, minutes] = med.time.split(':').map(Number);
-        const medTime = hours * 60 + minutes;
+    if (prefs.medication) {
+        const takenToday = new Set(state.medicationLogsToday.map(log => log.medicationId));
 
-        if (Math.abs(currentTime - medTime) <= 30) {
+        state.medications.filter(m => m.active && m.reminder && m.time && !takenToday.has(m.id)).forEach(med => {
+            const [hours, minutes] = med.time.split(':').map(Number);
+            const medTime = hours * 60 + minutes;
+
+            if (Math.abs(currentTime - medTime) <= 30) {
+                reminders.push({
+                    key: `med-${med.id}-${now.toDateString()}`,
+                    type: 'medication',
+                    message: `Time to take ${med.name}`,
+                    icon: '💊'
+                });
+            }
+        });
+    }
+
+    if (prefs.appointment) {
+        const tomorrow = new Date(now);
+        tomorrow.setDate(tomorrow.getDate() + 1);
+
+        state.appointments.filter(apt => apt.reminder).forEach(apt => {
+            // parseLocalDate, not new Date(): 'YYYY-MM-DD' parses as UTC midnight,
+            // which lands on the previous day for anyone west of UTC.
+            if (parseLocalDate(apt.date).toDateString() === tomorrow.toDateString()) {
+                reminders.push({
+                    key: `appt-${apt.id}`,
+                    type: 'appointment',
+                    message: `Appointment tomorrow: ${apt.type}`,
+                    icon: '🏥'
+                });
+            }
+        });
+    }
+
+    if (prefs.daily && now.getHours() >= DAILY_CHECKIN_HOUR) {
+        const today = localDateString(now);
+        const loggedToday = state.diaryEntries.some(entry => entry.date === today);
+        if (!loggedToday) {
             reminders.push({
-                key: `med-${med.id}-${now.toDateString()}`,
-                type: 'medication',
-                message: `Time to take ${med.name}`,
-                icon: '💊'
+                key: `daily-${now.toDateString()}`,
+                type: 'daily',
+                message: "How was today? Log your mood in your diary",
+                icon: '📔'
             });
         }
-    });
-
-    const tomorrow = new Date(now);
-    tomorrow.setDate(tomorrow.getDate() + 1);
-
-    state.appointments.filter(apt => apt.reminder).forEach(apt => {
-        const aptDate = new Date(apt.date);
-        if (aptDate.toDateString() === tomorrow.toDateString()) {
-            reminders.push({
-                key: `appt-${apt.id}`,
-                type: 'appointment',
-                message: `Appointment tomorrow: ${apt.type}`,
-                icon: '🏥'
-            });
-        }
-    });
+    }
 
     document.getElementById('reminderCount').textContent = reminders.length;
     window.currentReminders = reminders;
@@ -1093,7 +1177,7 @@ function checkReminders() {
         reminders.forEach(r => {
             if (!notifiedReminderKeys.has(r.key)) {
                 notifiedReminderKeys.add(r.key);
-                new Notification(r.message, { icon: undefined, body: r.type === 'medication' ? 'Medication reminder' : 'Appointment reminder' });
+                new Notification(r.message, { body: REMINDER_BODIES[r.type] });
             }
         });
     }

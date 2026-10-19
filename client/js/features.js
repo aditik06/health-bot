@@ -173,6 +173,7 @@ async function markMedicationTaken(id) {
         showNotification(`${med.name} marked as taken! ✓`);
         trackEvent('log_medication_taken');
         updateTodaysMedications();
+        checkReminders();
     } catch (err) {
         showNotification(err.message || 'Could not log medication');
     }
@@ -279,6 +280,7 @@ function setupDiary() {
 
             loadDiaryEntries();
             updateWeeklyMoodChart();
+            checkReminders();
             showNotification('Diary entry saved! 📔');
             trackEvent('log_diary_entry');
         } catch (err) {
@@ -347,7 +349,8 @@ function filterDiary() {
         const matchesMood = moodFilter === 'all' || entry.mood === moodFilter;
         const matchesSearch = !searchText ||
             (entry.content && entry.content.toLowerCase().includes(searchText)) ||
-            (entry.title && entry.title.toLowerCase().includes(searchText));
+            (entry.title && entry.title.toLowerCase().includes(searchText)) ||
+            (entry.tags || []).some(tag => String(tag).toLowerCase().includes(searchText));
 
         return matchesMood && matchesSearch;
     });
