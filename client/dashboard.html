@@ -29,18 +29,18 @@
         <!-- Sidebar Menu -->
         <aside class="sidebar">
             <ul class="menu">
-                <li class="menu-item active" data-section="overview">📊 Overview</li>
-                <li class="menu-item" data-section="calendar">📅 Advanced Calendar</li>
-                <li class="menu-item" data-section="medication">💊 Medications</li>
-                <li class="menu-item" data-section="diary">📔 Mood & Diary</li>
-                <li class="menu-item" data-section="pregnancy">🤰 Pregnancy Tracker</li>
-                <li class="menu-item" data-section="kicks">👶 Kick Counter</li>
-                <li class="menu-item" data-section="contractions">⏱️ Contraction Timer</li>
-                <li class="menu-item" data-section="diet">🥗 Diet & Nutrition</li>
-                <li class="menu-item" data-section="appointments">🏥 Appointments</li>
-                <li class="menu-item" data-section="emergency">🚨 Emergency Contacts</li>
-                <li class="menu-item" data-section="resources">📚 Resources</li>
-                <li class="menu-item" data-section="settings">⚙️ Settings</li>
+                <li class="menu-item active" data-section="overview"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg><span>Overview</span></li>
+                <li class="menu-item" data-section="calendar"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="2.5"/><path d="M8 2v4M16 2v4M3 10h18"/></svg><span>Advanced Calendar</span></li>
+                <li class="menu-item" data-section="medication"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10.5 20.5 3.5 13.5a4.95 4.95 0 0 1 7-7l7 7a4.95 4.95 0 0 1-7 7Z"/><path d="m8.5 8.5 7 7"/></svg><span>Medications</span></li>
+                <li class="menu-item" data-section="diary"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3h12a2 2 0 0 1 2 2v16H7a2 2 0 0 1-2-2V3Z"/><path d="M9 8h6M9 12h6"/></svg><span>Mood &amp; Diary</span></li>
+                <li class="menu-item" data-section="pregnancy"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.5s-8-4.7-8-10.2A4.3 4.3 0 0 1 12 7.6a4.3 4.3 0 0 1 8 2.7c0 5.5-8 10.2-8 10.2Z"/></svg><span>Pregnancy Tracker</span></li>
+                <li class="menu-item" data-section="kicks"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h4l2.5-7 5 14 2.5-7h4"/></svg><span>Kick Counter</span></li>
+                <li class="menu-item" data-section="contractions"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M9.5 2h5"/></svg><span>Contraction Timer</span></li>
+                <li class="menu-item" data-section="diet"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19c0-8 5-14 15-14 0 10-6 15-14 15"/><path d="M5 19c3-5 6-8 11-10"/></svg><span>Diet &amp; Nutrition</span></li>
+                <li class="menu-item" data-section="appointments"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4h6v3H9zM9 14h6M12 11v6"/></svg><span>Appointments</span></li>
+                <li class="menu-item" data-section="emergency"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2Z"/></svg><span>Emergency Contacts</span></li>
+                <li class="menu-item" data-section="resources"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 5.5C4 4 8 4 12 6c4-2 8-2 10-.5V19c-2-1.5-6-1.5-10 .5-4-2-8-2-10-.5Z"/><path d="M12 6v13.5"/></svg><span>Resources</span></li>
+                <li class="menu-item" data-section="settings"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg><span>Settings</span></li>
             </ul>
         </aside>
 
@@ -79,14 +79,14 @@
                 <!-- Dashboard Cards -->
                 <div class="dashboard-grid">
                     <div class="dashboard-card">
-                        <h3>✨ Today's Insights</h3>
+                        <h3>Today's Insights</h3>
                         <div id="todayInsights" class="insight-content">
                             <p>Loading insights...</p>
                         </div>
                     </div>
 
                     <div class="dashboard-card">
-                        <h3>⚡ Quick Actions</h3>
+                        <h3>Quick Actions</h3>
                         <div class="quick-actions">
                             <button class="quick-btn" onclick="quickLogMood()">😊 Log Mood</button>
                             <button class="quick-btn" onclick="quickAddMed()">💊 Take Med</button>
@@ -96,14 +96,14 @@
                     </div>
 
                     <div class="dashboard-card">
-                        <h3>💊 Today's Medications</h3>
+                        <h3>Today's Medications</h3>
                         <div id="todayMedications">
                             <p class="info-text">No medications scheduled</p>
                         </div>
                     </div>
 
                     <div class="dashboard-card">
-                        <h3>😊 Mood This Week</h3>
+                        <h3>Mood This Week</h3>
                         <canvas id="weeklyMoodChart" style="max-height: 200px;"></canvas>
                     </div>
                 </div>
@@ -111,7 +111,7 @@
 
             <!-- ========== CALENDAR SECTION ========== -->
             <section id="calendar" class="content-section">
-                <h2>📅 Advanced Cycle Calendar</h2>
+                <h2>Advanced Cycle Calendar</h2>
                 
                 <div class="calendar-controls">
                     <button class="btn-primary" onclick="logPeriodStart()">📌 Log Period Start Today</button>
@@ -123,7 +123,7 @@
                     <!-- Sidebar Info -->
                     <div class="calendar-sidebar-info">
                         <div class="cycle-info-card">
-                            <h4>📊 Cycle Statistics</h4>
+                            <h4>Cycle Statistics</h4>
                             <div class="cycle-stats">
                                 <div class="stat-item">
                                     <span class="stat-label">Average Cycle:</span>
@@ -145,7 +145,7 @@
                         </div>
 
                         <div class="cycle-info-card">
-                            <h4>📈 Cycle Length Chart</h4>
+                            <h4>Cycle Length Chart</h4>
                             <canvas id="cycleLengthChart" style="max-height: 200px;"></canvas>
                         </div>
                     </div>
@@ -160,19 +160,19 @@
                         <div id="calendarGrid" class="calendar-grid"></div>
                         <div class="calendar-legend">
                             <div class="legend-item">
-                                <span class="legend-color" style="background: #ff6b9d;"></span>
+                                <span class="legend-color legend-period"></span>
                                 <span>Period</span>
                             </div>
                             <div class="legend-item">
-                                <span class="legend-color" style="background: #4ecdc4;"></span>
+                                <span class="legend-color legend-fertile"></span>
                                 <span>Fertile Window</span>
                             </div>
                             <div class="legend-item">
-                                <span class="legend-color" style="background: #95e1d3;"></span>
+                                <span class="legend-color legend-ovulation"></span>
                                 <span>Ovulation</span>
                             </div>
                             <div class="legend-item">
-                                <span class="legend-color" style="background: #ffd93d;"></span>
+                                <span class="legend-color legend-predicted"></span>
                                 <span>Predicted</span>
                             </div>
                         </div>
@@ -182,12 +182,12 @@
 
             <!-- ========== MEDICATION SECTION ========== -->
             <section id="medication" class="content-section">
-                <h2>💊 Medication & Supplement Tracker</h2>
+                <h2>Medication & Supplement Tracker</h2>
                 
                 <div class="medication-container">
                     <!-- Prescription Upload -->
                     <div class="prescription-upload">
-                        <h3>📄 Upload Prescription</h3>
+                        <h3>Upload Prescription</h3>
                         <div class="upload-area" id="uploadArea">
                             <input type="file" id="prescriptionFile" accept="image/*,.pdf" hidden>
                             <div class="upload-prompt">
@@ -262,7 +262,7 @@
 
             <!-- ========== MOOD & DIARY SECTION ========== -->
             <section id="diary" class="content-section">
-                <h2>📔 Mood & Daily Diary</h2>
+                <h2>Mood & Daily Diary</h2>
                 
                 <div class="diary-container">
                     <!-- Diary Form -->
@@ -378,7 +378,7 @@
 
             <!-- ========== PREGNANCY TRACKER SECTION ========== -->
             <section id="pregnancy" class="content-section">
-                <h2>🤰 Pregnancy Tracker</h2>
+                <h2>Pregnancy Tracker</h2>
                 
                 <!-- Dashboard -->
                 <div class="pregnancy-dashboard" id="pregnancyDashboard">
@@ -404,7 +404,7 @@
                     <div class="pregnancy-grid">
                         <!-- Development -->
                         <div class="pregnancy-section">
-                            <h3>👶 This Week's Development</h3>
+                            <h3>This Week's Development</h3>
                             <div id="weeklyDevelopment" class="development-info">
                                 <p>Loading development info...</p>
                             </div>
@@ -412,7 +412,7 @@
 
                         <!-- Weight Tracking -->
                         <div class="pregnancy-section">
-                            <h3>⚖️ Weight Tracking</h3>
+                            <h3>Weight Tracking</h3>
                             <form id="weightForm" class="inline-form">
                                 <input type="number" id="weightValue" step="0.1" placeholder="Weight (kg)" required>
                                 <button type="submit" class="btn-primary">Log</button>
@@ -437,7 +437,7 @@
 
                         <!-- Milestones -->
                         <div class="pregnancy-section">
-                            <h3>🎯 Trimester Milestones</h3>
+                            <h3>Trimester Milestones</h3>
                             <div id="milestones" class="milestone-list">
                                 <p>Loading milestones...</p>
                             </div>
@@ -453,7 +453,7 @@
 
             <!-- ========== KICK COUNTER SECTION ========== -->
             <section id="kicks" class="content-section">
-                <h2>👶 Baby Kick Counter</h2>
+                <h2>Baby Kick Counter</h2>
                 
                 <div class="kick-counter">
                     <div class="kick-main">
@@ -499,7 +499,7 @@
 
                         <!-- Tips -->
                         <div class="kick-tips">
-                            <h4>💡 Tips for Kick Counting</h4>
+                            <h4>Tips for Kick Counting</h4>
                             <ul>
                                 <li>Best time: After meals or when baby is usually active</li>
                                 <li>Goal: 10 movements in 2 hours is normal</li>
@@ -511,7 +511,7 @@
 
                     <!-- History -->
                     <div class="kick-history">
-                        <h3>📊 Kick History</h3>
+                        <h3>Kick History</h3>
                         <canvas id="kickChart" style="max-height: 200px;"></canvas>
                         <div id="kickHistoryList">
                             <p class="info-text">No kick sessions yet.</p>
@@ -522,7 +522,7 @@
 
             <!-- ========== CONTRACTION TIMER SECTION ========== -->
             <section id="contractions" class="content-section">
-                <h2>⏱️ Contraction Timer</h2>
+                <h2>Contraction Timer</h2>
                 
                 <div class="contraction-timer">
                     <div class="timer-main">
@@ -598,7 +598,7 @@
 
                     <!-- History -->
                     <div class="contraction-history">
-                        <h3>📝 Today's Contractions</h3>
+                        <h3>Today's Contractions</h3>
                         <div class="contraction-summary">
                             <div class="summary-stat">
                                 <strong id="totalContractions">0</strong>
@@ -625,12 +625,12 @@
 
             <!-- ========== DIET & NUTRITION SECTION ========== -->
             <section id="diet" class="content-section">
-                <h2>🥗 Diet & Nutrition Plan</h2>
+                <h2>Diet & Nutrition Plan</h2>
                 
                 <div class="diet-container">
                     <!-- Prescribed Diet -->
                     <div class="diet-section">
-                        <h3>📋 Prescribed Diet Plan</h3>
+                        <h3>Prescribed Diet Plan</h3>
                         <div class="prescription-diet" id="prescribedDiet">
                             <p class="info-text">Upload your prescription in the Medications section to get personalized diet recommendations.</p>
                         </div>
@@ -646,28 +646,28 @@
                     <!-- Recommendations -->
                     <div class="diet-grid">
                         <div class="diet-card">
-                            <h3>🥗 Recommended Foods</h3>
+                            <h3>Recommended Foods</h3>
                             <div id="recommendedFoods">
                                 <p>Loading recommendations...</p>
                             </div>
                         </div>
 
                         <div class="diet-card">
-                            <h3>🚫 Foods to Avoid</h3>
+                            <h3>Foods to Avoid</h3>
                             <div id="avoidFoods">
                                 <p>Loading...</p>
                             </div>
                         </div>
 
                         <div class="diet-card">
-                            <h3>💊 Essential Nutrients</h3>
+                            <h3>Essential Nutrients</h3>
                             <div id="essentialNutrients">
                                 <p>Loading...</p>
                             </div>
                         </div>
 
                         <div class="diet-card">
-                            <h3>💪 Exercise Suggestions</h3>
+                            <h3>Exercise Suggestions</h3>
                             <div id="exercisePlan">
                                 <p>Loading...</p>
                             </div>
@@ -676,7 +676,7 @@
 
                     <!-- Meal Plan -->
                     <div class="meal-plan">
-                        <h3>🍽️ Sample Daily Meal Plan</h3>
+                        <h3>Sample Daily Meal Plan</h3>
                         <div id="sampleMealPlan" class="meal-grid">
                             <p>Loading meal plan...</p>
                         </div>
@@ -686,7 +686,7 @@
 
             <!-- ========== APPOINTMENTS SECTION ========== -->
             <section id="appointments" class="content-section">
-                <h2>🏥 Doctor Appointments</h2>
+                <h2>Doctor Appointments</h2>
                 
                 <form id="appointmentForm" class="appointment-form">
                     <div class="form-row">
@@ -740,7 +740,7 @@
 
             <!-- ========== EMERGENCY CONTACTS SECTION ========== -->
             <section id="emergency" class="content-section">
-                <h2>🚨 Emergency Contacts</h2>
+                <h2>Emergency Contacts</h2>
                 
                 <div class="emergency-grid">
                     <div class="contact-card emergency">
@@ -766,7 +766,7 @@
                 <button class="btn-primary" onclick="editContacts()">✏️ Edit Contacts</button>
 
                 <div class="emergency-info">
-                    <h3>⚠️ When to Seek Immediate Help</h3>
+                    <h3>When to Seek Immediate Help</h3>
                     <ul class="warning-list">
                         <li>Severe abdominal pain</li>
                         <li>Heavy bleeding</li>
@@ -781,25 +781,25 @@
 
             <!-- ========== RESOURCES SECTION ========== -->
             <section id="resources" class="content-section">
-                <h2>📚 Resources & Support</h2>
+                <h2>Resources & Support</h2>
                 
                 <div class="resources-grid">
                     <div class="resource-section">
-                        <h3>📖 Recommended Books</h3>
+                        <h3>Recommended Books</h3>
                         <div id="bookList">
                             <p>Loading books...</p>
                         </div>
                     </div>
 
                     <div class="resource-section">
-                        <h3>👥 Support Groups</h3>
+                        <h3>Support Groups</h3>
                         <div id="groupList">
                             <p>Loading groups...</p>
                         </div>
                     </div>
 
                     <div class="resource-section">
-                        <h3>🎓 Educational Resources</h3>
+                        <h3>Educational Resources</h3>
                         <div class="edu-resources">
                             <a href="https://www.youtube.com/results?search_query=prenatal+yoga" target="_blank" rel="noopener" class="resource-link">📹 Prenatal Yoga Videos</a>
                             <a href="https://www.youtube.com/results?search_query=pregnancy+nutrition+guide" target="_blank" rel="noopener" class="resource-link">📖 Pregnancy Nutrition Guide</a>
@@ -813,17 +813,17 @@
 
             <!-- ========== SETTINGS SECTION ========== -->
             <section id="settings" class="content-section">
-                <h2>⚙️ Settings</h2>
+                <h2>Settings</h2>
                 
                 <div class="settings-grid">
                     <div class="setting-section">
-                        <h3>👤 Profile Settings</h3>
+                        <h3>Profile Settings</h3>
                         <button class="btn-primary" onclick="editProfile()">✏️ Edit Profile</button>
                         <button class="btn-primary" onclick="updatePregnancyStatus()">🤰 Update Pregnancy Status</button>
                     </div>
 
                     <div class="setting-section">
-                        <h3>🔔 Notification Settings</h3>
+                        <h3>Notification Settings</h3>
                         <div class="setting-item">
                             <label class="switch">
                                 <input type="checkbox" id="medicationReminders" checked>
@@ -848,7 +848,7 @@
                     </div>
 
                     <div class="setting-section">
-                        <h3>🎨 Appearance</h3>
+                        <h3>Appearance</h3>
                         <div class="setting-item">
                             <label class="switch">
                                 <input type="checkbox" id="darkModeToggle">
@@ -859,7 +859,7 @@
                     </div>
 
                     <div class="setting-section">
-                        <h3>💾 Data Management</h3>
+                        <h3>Data Management</h3>
                         <button class="btn-primary" onclick="exportAllData()">📥 Export All Data</button>
                         <button class="btn-primary" onclick="document.getElementById('importFile').click()">📤 Import Data</button>
                         <input type="file" id="importFile" accept=".json" hidden onchange="importData(event)">
@@ -877,7 +877,7 @@
     <div id="reminderModal" class="modal" style="display: none;">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>🔔 Today's Reminders</h3>
+                <h3>Today's Reminders</h3>
                 <span class="close-modal" onclick="closeReminders()">&times;</span>
             </div>
             <div class="modal-body" id="reminderList">

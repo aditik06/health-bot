@@ -272,7 +272,11 @@ function setupNavigation() {
 // Single source of truth for tab switching (also used by quick actions in features.js)
 function navigateTo(sectionId) {
     document.querySelectorAll('.menu-item').forEach(mi => {
-        mi.classList.toggle('active', mi.getAttribute('data-section') === sectionId);
+        const isActive = mi.getAttribute('data-section') === sectionId;
+        mi.classList.toggle('active', isActive);
+        // On narrow screens the menu is a horizontal scroller; keep the
+        // current item in view (inline only, so the page itself doesn't jump).
+        if (isActive) mi.scrollIntoView({ inline: 'center', block: 'nearest' });
     });
     document.querySelectorAll('.content-section').forEach(s => {
         s.classList.toggle('active', s.id === sectionId);
