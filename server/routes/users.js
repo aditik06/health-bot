@@ -5,6 +5,7 @@ const db = require('../db');
 const { UPLOAD_DIR } = require('../config');
 const { authRequired } = require('../middleware/auth');
 const { userToJson } = require('../serializers');
+const { validateProfile } = require('../validate');
 
 const router = express.Router();
 router.use(authRequired);
@@ -33,15 +34,16 @@ router.get('/me', (req, res) => {
 });
 
 router.put('/me', (req, res) => {
+  const { values: profile, error } = validateProfile(req.body || {});
+  if (error) return res.status(400).json({ error });
+
   const updates = [];
   const values = [];
 
   for (const [jsKey, column] of Object.entries(EDITABLE_FIELDS)) {
-    if (Object.prototype.hasOwnProperty.call(req.body, jsKey)) {
+    if (Object.prototype.hasOwnProperty.call(profile, jsKey)) {
       updates.push(`${column} = ?`);
-      let value = req.body[jsKey];
-      if (jsKey === 'darkMode') value = value ? 1 : 0;
-      values.push(value);
+      values.push(jsKey === 'darkMode' ? (profile[jsKey] ? 1 : 0) : profile[jsKey]);
     }
   }
 

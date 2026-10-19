@@ -6,6 +6,7 @@ const db = require('../db');
 const { JWT_SECRET, EMAIL_ENABLED } = require('../config');
 const { userToJson } = require('../serializers');
 const { sendVerificationEmail } = require('../mailer');
+const { validateProfile, validateEmail, validatePassword } = require('../validate');
 
 const router = express.Router();
 
@@ -22,17 +23,19 @@ function issueVerificationToken(userId, email, name) {
 }
 
 router.post('/register', async (req, res) => {
-  const {
-    name, email, password, age,
-    cycleStartDate, cycleLength,
-    pregnancyStatus, pregnancyStartDate,
-    doctorName, doctorPhone,
-    emergencyContact, emergencyPhone
-  } = req.body;
+  const { name, email, password } = req.body;
 
   if (!name || !email || !password) {
     return res.status(400).json({ error: 'Name, email and password are required' });
   }
+
+  const inputError = validateEmail(email) || validatePassword(password);
+  if (inputError) return res.status(400).json({ error: inputError });
+
+  // Same rules as editing a profile, so registration can't store values the
+  // profile editor would refuse (negative cycle length, "banana" status...).
+  const { values: profile, error: profileError } = validateProfile(req.body);
+  if (profileError) return res.status(400).json({ error: profileError });
 
   const existing = db.prepare('SELECT id FROM users WHERE email = ?').get(email);
   if (existing) {
@@ -52,9 +55,10 @@ router.post('/register', async (req, res) => {
       emergency_contact, emergency_phone, email_verified
     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `).run(
-    name, email, passwordHash, age || null, cycleStartDate || null,
-    cycleLength || 28, pregnancyStatus || 'not-pregnant', pregnancyStartDate || null,
-    doctorName || null, doctorPhone || null, emergencyContact || null, emergencyPhone || null,
+    profile.name, email, passwordHash, profile.age ?? null, profile.cycleStartDate ?? null,
+    profile.cycleLength ?? 28, profile.pregnancyStatus ?? 'not-pregnant', profile.pregnancyStartDate ?? null,
+    profile.doctorName ?? null, profile.doctorPhone ?? null,
+    profile.emergencyContact ?? null, profile.emergencyPhone ?? null,
     EMAIL_ENABLED ? 0 : 1
   );
 
