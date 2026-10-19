@@ -5,10 +5,7 @@ const multer = require('multer');
 const db = require('../db');
 const { authRequired } = require('../middleware/auth');
 const { prescriptionToJson } = require('../serializers');
-const { DATA_DIR } = require('../config');
-
-const UPLOAD_DIR = path.join(DATA_DIR, 'uploads');
-fs.mkdirSync(UPLOAD_DIR, { recursive: true });
+const { UPLOAD_DIR } = require('../config');
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, UPLOAD_DIR),

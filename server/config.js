@@ -10,6 +10,11 @@ require('dotenv').config({ path: path.join(__dirname, '.env') });
 const DATA_DIR = process.env.DATA_DIR || __dirname;
 fs.mkdirSync(DATA_DIR, { recursive: true });
 
+// Uploaded prescription files. Shared so the upload route and account
+// deletion can't drift apart on where files live.
+const UPLOAD_DIR = path.join(DATA_DIR, 'uploads');
+fs.mkdirSync(UPLOAD_DIR, { recursive: true });
+
 const SECRET_FILE = path.join(DATA_DIR, '.jwt_secret');
 
 function loadOrCreateSecret() {
@@ -42,6 +47,7 @@ const APP_URL = (process.env.APP_URL || `http://localhost:${PORT}`).replace(/\/$
 
 module.exports = {
   DATA_DIR,
+  UPLOAD_DIR,
   JWT_SECRET: loadOrCreateSecret(),
   PORT,
   APP_URL,

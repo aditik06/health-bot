@@ -1,5 +1,8 @@
+const fs = require('fs');
+const path = require('path');
 const express = require('express');
 const db = require('../db');
+const { UPLOAD_DIR } = require('../config');
 const { authRequired } = require('../middleware/auth');
 const { userToJson } = require('../serializers');
 
@@ -54,7 +57,19 @@ router.put('/me', (req, res) => {
 });
 
 router.delete('/me', (req, res) => {
+  // The DB rows cascade away with the user, but the uploaded prescription
+  // files don't - collect their names first, or "delete my account" would
+  // leave someone's medical documents sitting on disk.
+  const files = db.prepare('SELECT file_path FROM prescriptions WHERE user_id = ?').all(req.userId);
+
   db.prepare('DELETE FROM users WHERE id = ?').run(req.userId);
+
+  for (const { file_path } of files) {
+    fs.unlink(path.join(UPLOAD_DIR, file_path), (err) => {
+      if (err && err.code !== 'ENOENT') console.error('Could not remove uploaded file:', err.message);
+    });
+  }
+
   res.status(204).end();
 });
 
