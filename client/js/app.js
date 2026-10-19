@@ -954,9 +954,20 @@ function openFormModal(title, fieldsHtml, onSubmit) {
     document.getElementById('formModalTitle').textContent = title;
     document.getElementById('formModalFields').innerHTML = fieldsHtml;
     const form = document.getElementById('formModalForm');
+    const errorBox = document.getElementById('formModalError');
+    errorBox.hidden = true;
+    errorBox.textContent = '';
     form.onsubmit = async (e) => {
         e.preventDefault();
-        await onSubmit();
+        errorBox.hidden = true;
+        try {
+            await onSubmit();
+        } catch (err) {
+            // Without this a rejected save (validation, network, expired
+            // session) was an unhandled promise: modal open, nothing shown.
+            errorBox.textContent = err.message || 'Could not save. Please try again.';
+            errorBox.hidden = false;
+        }
     };
     document.getElementById('formModal').style.display = 'flex';
 }
