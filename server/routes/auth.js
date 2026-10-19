@@ -12,6 +12,20 @@ const router = express.Router();
 
 const VERIFICATION_TTL_MS = 24 * 60 * 60 * 1000; // 24 hours
 
+// Emails are identity, so they're compared case-insensitively and without
+// stray whitespace - phone keyboards capitalise the first letter and
+// autocomplete appends spaces, and "Aditi@x.com" must not be a different
+// person from "aditi@x.com".
+function normalizeEmail(email) {
+  return email.trim().toLowerCase();
+}
+
+// lower(email) rather than a plain equality so accounts created before this
+// normalisation (stored in whatever case they were typed) still match.
+function findUserByEmail(email) {
+  return db.prepare('SELECT * FROM users WHERE lower(email) = ?').get(normalizeEmail(email));
+}
+
 function issueVerificationToken(userId, email, name) {
   const token = crypto.randomBytes(32).toString('hex');
   const expires = new Date(Date.now() + VERIFICATION_TTL_MS).toISOString();
@@ -37,7 +51,7 @@ router.post('/register', async (req, res) => {
   const { values: profile, error: profileError } = validateProfile(req.body);
   if (profileError) return res.status(400).json({ error: profileError });
 
-  const existing = db.prepare('SELECT id FROM users WHERE email = ?').get(email);
+  const existing = findUserByEmail(email);
   if (existing) {
     return res.status(409).json({ error: 'Email already registered' });
   }
@@ -55,7 +69,7 @@ router.post('/register', async (req, res) => {
       emergency_contact, emergency_phone, email_verified
     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `).run(
-    profile.name, email, passwordHash, profile.age ?? null, profile.cycleStartDate ?? null,
+    profile.name, normalizeEmail(email), passwordHash, profile.age ?? null, profile.cycleStartDate ?? null,
     profile.cycleLength ?? 28, profile.pregnancyStatus ?? 'not-pregnant', profile.pregnancyStartDate ?? null,
     profile.doctorName ?? null, profile.doctorPhone ?? null,
     profile.emergencyContact ?? null, profile.emergencyPhone ?? null,
@@ -81,8 +95,11 @@ router.post('/login', async (req, res) => {
   if (!email || !password) {
     return res.status(400).json({ error: 'Email and password are required' });
   }
+  if (typeof email !== 'string' || typeof password !== 'string') {
+    return res.status(400).json({ error: 'Email and password must be text' });
+  }
 
-  const user = db.prepare('SELECT * FROM users WHERE email = ?').get(email);
+  const user = findUserByEmail(email);
   if (!user) {
     return res.status(401).json({ error: 'Invalid credentials' });
   }
@@ -130,9 +147,9 @@ router.post('/resend-verification', (req, res) => {
   // registered is its own small information leak.
   const genericResponse = { message: "If that account needs verification, we've sent a new email." };
 
-  if (!EMAIL_ENABLED || !email) return res.json(genericResponse);
+  if (!EMAIL_ENABLED || !email || typeof email !== 'string') return res.json(genericResponse);
 
-  const user = db.prepare('SELECT * FROM users WHERE email = ?').get(email);
+  const user = findUserByEmail(email);
   if (user && !user.email_verified) {
     issueVerificationToken(user.id, user.email, user.name);
   }
